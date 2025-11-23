@@ -291,20 +291,27 @@ class InfraTaggingProcessor:
             layers = self.get_infra_layers()
             self.log(f"Retrieved {len(layers)} layers")
             
-            layer_dict = {layer.get('LAYER_NAME'): layer for layer in layers if layer.get('LAYER_NAME')}
+            # Create lookup by BOTH name AND id for better matching
+            layer_dict_by_name = {layer.get('LAYER_NAME'): layer for layer in layers if layer.get('LAYER_NAME')}
+            layer_dict_by_id = {layer.get('LAYER_ID'): layer for layer in layers if layer.get('LAYER_ID')}
             
             infra_features = []
             type_id = 0 if dependency_type == "Depending" else 1
             
             for dep in self.dependency_all:
+                # Get both layer name and ID from dependency
                 source_layer = dep.get('SOURCELAYER', '')
+                source_layer_id = dep.get('SOURCE_LAYERID')
                 source_feature_id = str(dep.get('SOURCE_FEATUREID', ''))
                 
                 schedule_data, has_issues = self.filter_schedule_links(
                     source_layer, source_feature_id, dependency_type, self.dependency_all
                 )
                 
-                matched_layer = layer_dict.get(source_layer)
+                # Try matching by ID first (more reliable), then by name
+                matched_layer = layer_dict_by_id.get(source_layer_id)
+                if not matched_layer and source_layer:
+                    matched_layer = layer_dict_by_name.get(source_layer)
                 
                 if matched_layer:
                     infra_features.append({
@@ -317,12 +324,13 @@ class InfraTaggingProcessor:
                         'ChartHeight': 0
                     })
                 else:
+                    # Use source_layer_id if available
                     infra_features.append({
                         'Category': 1 if has_issues else 0,
                         'Type': type_id,
                         'FeatureId': source_feature_id,
-                        'Layer_Id': -1,
-                        'Layer': f"Unknown Layer ({source_layer})",
+                        'Layer_Id': source_layer_id if source_layer_id else -1,
+                        'Layer': source_layer if source_layer else f"Unknown Layer (ID:{source_layer_id})",
                         'ChartJSON': None,
                         'ChartHeight': 0
                     })
@@ -421,6 +429,8 @@ class InfraTaggingProcessor:
             self.log("Generating chart data for Supporting features...")
             supporting_charts = self.get_schedule_data_island_wide(lst_supporting, "Supporting")
             
+            # Update Depending features with chart data
+            depending_matched = 0
             for feature in lst_depending:
                 matching_charts = [c for c in depending_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
@@ -428,7 +438,12 @@ class InfraTaggingProcessor:
                 if matching_charts:
                     feature['ChartJSON'] = matching_charts[0]['ChartJSON']
                     feature['ChartHeight'] = matching_charts[0]['ChartHeight']
+                    depending_matched += 1
             
+            self.log(f"Matched chart data for {depending_matched}/{len(lst_depending)} Depending features")
+            
+            # Update Supporting features with chart data
+            supporting_matched = 0
             for feature in lst_supporting:
                 matching_charts = [c for c in supporting_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
@@ -436,6 +451,9 @@ class InfraTaggingProcessor:
                 if matching_charts:
                     feature['ChartJSON'] = matching_charts[0]['ChartJSON']
                     feature['ChartHeight'] = matching_charts[0]['ChartHeight']
+                    supporting_matched += 1
+            
+            self.log(f"Matched chart data for {supporting_matched}/{len(lst_supporting)} Supporting features")
             
             self.save_to_cache_table(lst_depending, lst_supporting)
             
