@@ -1,0 +1,30 @@
+{
+  "database": {
+    "connection_string": "Driver={ODBC Driver 17 for SQL Server};Server=YOUR_SQL_SERVER;Database=YOUR_DATABASE;Trusted_Connection=yes;",
+    "app_schema": "dbo",
+    "timeout": 10000
+  },
+  "email": {
+    "enabled": true,
+    "smtp_server": "smtp.your-domain.com",
+    "smtp_port": 587,
+    "from_email": "noreply@your-domain.com",
+    "to_emails": [
+      "admin@your-domain.com",
+      "team@your-domain.com"
+    ],
+    "username": "your_email_username",
+    "password": "your_email_password",
+    "use_tls": true
+  },
+  "processing": {
+    "batch_size": 1000,
+    "max_retries": 3,
+    "retry_delay_seconds": 5
+  },
+  "logging": {
+    "level": "INFO",
+    "log_to_file": true,
+    "log_directory": "C:\\Logs\\InfraTagging"
+  }
+}

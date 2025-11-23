@@ -1,0 +1,132 @@
+{
+  "_comment": "Production Configuration for Infrastructure Tagging GP Tool",
+  "_instructions": "Copy this file to config.json and update with your actual values",
+  
+  "database": {
+    "_comment_connection": "Use Windows Authentication (Trusted_Connection) or SQL Auth (UID/PWD)",
+    "connection_string": "Driver={ODBC Driver 17 for SQL Server};Server=YOUR_SQL_SERVER\\INSTANCE;Database=YOUR_DATABASE;Trusted_Connection=yes;",
+    
+    "_comment_connection_sql_auth": "Alternative: SQL Server Authentication",
+    "_connection_string_alt": "Driver={ODBC Driver 17 for SQL Server};Server=YOUR_SQL_SERVER;Database=YOUR_DATABASE;UID=username;PWD=password;",
+    
+    "app_schema": "dbo",
+    
+    "_comment_timeout": "Connection timeout in milliseconds",
+    "timeout": 10000,
+    
+    "_comment_batch": "Batch size for processing large datasets",
+    "batch_size": 1000
+  },
+  
+  "email": {
+    "_comment": "Set enabled to false to disable email notifications",
+    "enabled": true,
+    
+    "_comment_smtp": "SMTP server configuration",
+    "smtp_server": "smtp.office365.com",
+    "smtp_port": 587,
+    "use_tls": true,
+    
+    "_comment_addresses": "Email addresses for notifications",
+    "from_email": "noreply@your-company.com",
+    "to_emails": [
+      "gis-admin@your-company.com",
+      "infrastructure-team@your-company.com"
+    ],
+    
+    "_comment_auth": "SMTP authentication (leave blank if not required)",
+    "username": "noreply@your-company.com",
+    "password": "your_smtp_password_or_app_password",
+    
+    "_comment_gmail": "For Gmail, use App Password: https://support.google.com/accounts/answer/185833",
+    "_gmail_example": {
+      "smtp_server": "smtp.gmail.com",
+      "smtp_port": 587,
+      "username": "your-email@gmail.com",
+      "password": "your-16-digit-app-password"
+    },
+    
+    "_comment_office365": "For Office 365, use organization credentials",
+    "_office365_example": {
+      "smtp_server": "smtp.office365.com",
+      "smtp_port": 587,
+      "username": "your-email@company.com",
+      "password": "your-password"
+    }
+  },
+  
+  "processing": {
+    "_comment": "Processing options for optimization",
+    
+    "batch_size": 1000,
+    "max_retries": 3,
+    "retry_delay_seconds": 5,
+    
+    "_comment_parallel": "Enable parallel processing (experimental)",
+    "enable_parallel": false,
+    "max_workers": 4
+  },
+  
+  "logging": {
+    "_comment": "Logging configuration",
+    
+    "level": "INFO",
+    "_levels": "Options: DEBUG, INFO, WARNING, ERROR, CRITICAL",
+    
+    "log_to_file": true,
+    "log_directory": "C:\\Logs\\InfraTagging",
+    "log_filename": "infratagging_{date}.log",
+    
+    "_comment_retention": "Log file retention in days",
+    "retention_days": 30
+  },
+  
+  "scheduling": {
+    "_comment": "Scheduling information (for documentation only, not used by script)",
+    
+    "frequency": "daily",
+    "time": "02:00",
+    "timezone": "UTC",
+    
+    "_comment_cron": "Cron expression for scheduling",
+    "cron_expression": "0 2 * * *"
+  },
+  
+  "performance": {
+    "_comment": "Performance tuning options",
+    
+    "sql_timeout_seconds": 300,
+    "query_governor_cost_limit": 0,
+    "lock_timeout_ms": 10000,
+    "transaction_isolation_level": "READ UNCOMMITTED",
+    
+    "_comment_cache": "Enable in-memory caching",
+    "enable_cache": true,
+    "cache_ttl_seconds": 3600
+  },
+  
+  "monitoring": {
+    "_comment": "Monitoring and alerting options",
+    
+    "send_email_on_success": true,
+    "send_email_on_failure": true,
+    
+    "_comment_thresholds": "Alert thresholds",
+    "max_execution_time_minutes": 60,
+    "min_records_expected": 100,
+    
+    "_comment_webhook": "Optional webhook for external monitoring systems",
+    "webhook_url": "",
+    "webhook_enabled": false
+  },
+  
+  "tables": {
+    "_comment": "Database table names (usually don't need to change these)",
+    
+    "mapping_depending": "INFRATAGGING_MAPPING",
+    "mapping_supporting": "INFRATAGGING_MAPPING_SUPP_VW",
+    "layers_view": "INFRATAGGING_LAYERS_VW",
+    "staging_view": "INFRA_CONS_STAGINGYR_VW",
+    "cache_table": "INFRATAGGING_SUMMARY_CACHE"
+  }
+}
