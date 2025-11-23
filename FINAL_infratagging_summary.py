@@ -444,44 +444,68 @@ class InfraTaggingProcessor:
             raise
     
     def save_to_cache_table(self, lst_depending: List[Dict], lst_supporting: List[Dict]):
-        """Save results to cache table in database"""
+        """Save results to cache table - matches .NET implementation"""
         try:
+            cache_table_tmp = self.app_schema.rstrip('.') + ".INFRATAGGING_SUMMARY_CACHE_TMP"
             cache_table = self.app_schema.rstrip('.') + ".INFRATAGGING_SUMMARY_CACHE"
             
-            clear_sql = f"DELETE FROM {cache_table}"
-            self.execute_sql_direct(clear_sql)
-            self.log("Cleared existing cache data")
+            # Step 1: Clear TMP table
+            clear_tmp_sql = f"DELETE FROM {cache_table_tmp}"
+            self.execute_sql_direct(clear_tmp_sql)
+            self.log("Cleared TMP cache table")
             
-            all_features = lst_depending + lst_supporting
-            
+            # Step 2: Insert into TMP table (Depending features)
             total_inserted = 0
-            for i in range(0, len(all_features), BATCH_SIZE):
-                batch = all_features[i:i + BATCH_SIZE]
-                
-                values_list = []
-                for feature in batch:
-                    feature_id = str(feature['FeatureId']).replace("'", "''")
-                    layer_name = str(feature['Layer']).replace("'", "''")
-                    chart_json = str(feature.get('ChartJSON', '')).replace("'", "''") if feature.get('ChartJSON') else ''
-                    
-                    values = f"('{feature_id}', {feature['Layer_Id']}, '{layer_name}', {feature['Type']}, {feature['Category']}, '{chart_json}', {feature.get('ChartHeight', 0)}, GETDATE())"
-                    values_list.append(values)
+            for feature in lst_depending:
+                feature_id = str(feature['FeatureId']).replace("'", "''")
+                chart_json = str(feature.get('ChartJSON', '')).replace("'", "''") if feature.get('ChartJSON') else ''
                 
                 insert_sql = f"""
-                INSERT INTO {cache_table} 
-                (FEATUREID, LAYER_ID, LAYER_NAME, TYPE, CATEGORY, CHART_JSON, CHART_HEIGHT, CREATED_DATE)
-                VALUES {','.join(values_list)}
+                INSERT INTO {cache_table_tmp} 
+                (LAYER_ID, FEATURE_ID, CATEGORY, UPDATEDDATE, TYPE, CHARTJSON, CHARTHEIGHT)
+                VALUES ({feature['Layer_Id']}, '{feature_id}', {feature['Category']}, SYSDATETIME(), {feature['Type']}, '{chart_json}', {feature.get('ChartHeight', 0)})
                 """
                 
                 self.execute_sql_direct(insert_sql)
-                total_inserted += len(batch)
+                total_inserted += 1
                 
-                self.log(f"Inserted batch {i//BATCH_SIZE + 1}: {len(batch)} records")
+                if total_inserted % 100 == 0:
+                    self.log(f"Inserted {total_inserted} records into TMP table...")
+            
+            # Step 3: Insert into TMP table (Supporting features)
+            for feature in lst_supporting:
+                feature_id = str(feature['FeatureId']).replace("'", "''")
+                chart_json = str(feature.get('ChartJSON', '')).replace("'", "''") if feature.get('ChartJSON') else ''
+                
+                insert_sql = f"""
+                INSERT INTO {cache_table_tmp} 
+                (LAYER_ID, FEATURE_ID, CATEGORY, UPDATEDDATE, TYPE, CHARTJSON, CHARTHEIGHT)
+                VALUES ({feature['Layer_Id']}, '{feature_id}', {feature['Category']}, SYSDATETIME(), {feature['Type']}, '{chart_json}', {feature.get('ChartHeight', 0)})
+                """
+                
+                self.execute_sql_direct(insert_sql)
+                total_inserted += 1
+                
+                if total_inserted % 100 == 0:
+                    self.log(f"Inserted {total_inserted} records into TMP table...")
+            
+            self.log(f"Completed inserting {total_inserted} records into TMP table")
+            
+            # Step 4: Clear main cache table
+            clear_cache_sql = f"DELETE FROM {cache_table}"
+            self.execute_sql_direct(clear_cache_sql)
+            self.log("Cleared main cache table")
+            
+            # Step 5: Copy from TMP to main cache table
+            copy_sql = f"INSERT INTO {cache_table} SELECT * FROM {cache_table_tmp}"
+            self.execute_sql_direct(copy_sql)
+            self.log(f"Copied {total_inserted} records from TMP to main cache table")
             
             self.log(f"Successfully saved {total_inserted} records to cache table")
             
         except Exception as e:
             self.log(f"Error in save_to_cache_table: {str(e)}")
+            self.log(f"Full error: {traceback.format_exc()}")
             raise
     
     def execute(self) -> str:
