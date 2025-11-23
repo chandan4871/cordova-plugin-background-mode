@@ -1,0 +1,50 @@
+{
+  "_comment": "Configuration for Infrastructure Tagging GP Tool (SDE Version)",
+  "_instructions": "Copy this file to config_sde.json and update with your actual values",
+  
+  "database": {
+    "_comment": "SDE connection settings",
+    "sde_path": "C:\\temp\\SDE_Conn\\ONETOOLDEV_ONETOOL_ARCGIS_CONN_SQL.sde",
+    
+    "_comment_schema": "Schema name with trailing dot (e.g., 'ONETOOLAPP.')",
+    "app_schema": "ONETOOLAPP.",
+    
+    "_comment_mgr_schema": "Optional manager schema if needed",
+    "mgr_schema": "ONETOOLMGR."
+  },
+  
+  "logging": {
+    "_comment": "Logging configuration",
+    "log_folder": "C:\\temp\\GPLogs",
+    "_log_folder_alt": "Y:\\logfiles\\GPLogs",
+    
+    "level": "INFO",
+    "_levels": "Options: DEBUG, INFO, WARNING, ERROR, CRITICAL"
+  },
+  
+  "email": {
+    "_comment": "Set enabled to false to disable email notifications",
+    "enabled": true,
+    
+    "_comment_smtp": "SMTP server configuration",
+    "smtp_server": "smtp.office365.com",
+    "smtp_port": 587,
+    "use_tls": true,
+    
+    "_comment_addresses": "Email addresses for notifications",
+    "from_email": "noreply@your-company.com",
+    "to_emails": [
+      "gis-admin@your-company.com",
+      "infrastructure-team@your-company.com"
+    ],
+    
+    "_comment_auth": "SMTP authentication (leave blank if not required)",
+    "username": "noreply@your-company.com",
+    "password": "your_smtp_password_or_app_password"
+  },
+  
+  "processing": {
+    "_comment": "Processing options",
+    "batch_size": 100
+  }
+}
