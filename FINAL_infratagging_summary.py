@@ -1,12 +1,12 @@
 """
 ========================================================================
-Infrastructure Tagging Summary Generation - FINAL VERSION
+Infrastructure Tagging Summary Generation - COMPLETE WORKING VERSION
 ========================================================================
 This script processes infrastructure tagging summaries for Depending 
 and Supporting features and caches results with chart data.
 
 Usage:
-    python FINAL_infratagging_summary.py
+    python infratagging_complete.py
 
 Edit the CONFIGURATION section below with your settings.
 ========================================================================
@@ -206,79 +206,146 @@ class InfraTaggingProcessor:
             self.log(f"Error in get_infra_layers: {str(e)}")
             raise
     
-    def filter_schedule_links(self, layer: str, feature_id: str, dependency_type: str, 
-                             dependency_list: List[Dict] = None) -> Tuple[List[Dict], bool]:
-        """Filter and process schedule links for a feature"""
-        schedule_data = []
-        has_issues = False
-        
+    def filter_schedule_links(self, source_layer: str, source_feature: str, 
+                             start_date: str, end_date: str, description: str,
+                             schedule_data_list: List[Dict], has_issues_ref: List[bool],
+                             rel_id: int, dependency_type: str, 
+                             dependency_list: List[Dict]) -> int:
+        """
+        RECURSIVE function to filter and process schedule links for a feature.
+        Builds a complete dependency tree by following all links.
+        """
         try:
-            if dependency_list is None:
-                dependency_list = self.dependency_all
+            # Filter dependencies where SOURCELAYER matches
+            filtered = [d for d in dependency_list 
+                       if d.get('SOURCELAYER') == source_layer and 
+                       str(d.get('SOURCE_FEATUREID')) == str(source_feature)]
             
-            if dependency_type == "Depending":
-                filtered = [d for d in dependency_list 
-                          if d.get('SOURCELAYER') == layer and str(d.get('SOURCE_FEATUREID')) == str(feature_id)]
-            else:
-                filtered = [d for d in dependency_list 
-                          if d.get('DESTINATIONLAYER') == layer and str(d.get('DESTINATION_FEATUREID')) == str(feature_id)]
+            rel_id += 1
             
-            for dep in filtered:
-                if dependency_type == "Depending":
-                    schedule_data.append({
-                        'Name': dep.get('DESTINATIONLAYER', ''),
-                        'Id': str(dep.get('DESTINATION_FEATUREID', '')),
-                        'startDate': self.format_date(dep.get('DESTINATION_START_DATE')),
-                        'endDate': self.format_date(dep.get('DESTINATION_END_DATE')),
-                        'RelationId': 0,
-                        'hasIssue': self.check_schedule_issue(dep)
-                    })
-                else:
-                    schedule_data.append({
-                        'Name': dep.get('SOURCELAYER', ''),
+            if len(filtered) > 0:
+                for dep in filtered:
+                    # Add schedule data for this dependency
+                    schedule_item = {
+                        'Name': dep.get('SOURCE_DESCRIPTION', ''),
+                        'SourceLayer': dep.get('SOURCELAYER', ''),
                         'Id': str(dep.get('SOURCE_FEATUREID', '')),
                         'startDate': self.format_date(dep.get('SOURCE_START_DATE')),
                         'endDate': self.format_date(dep.get('SOURCE_END_DATE')),
-                        'RelationId': 0,
-                        'hasIssue': self.check_schedule_issue(dep)
-                    })
-                
-                if schedule_data[-1]['hasIssue']:
-                    has_issues = True
+                        'RelationId': rel_id,
+                        'hasIssue': False
+                    }
+                    
+                    # Check for scheduling issues
+                    if dependency_type == "Depending":
+                        # For Depending: issue if destination ends AFTER source starts
+                        dest_end = self.convert_to_int(dep.get('DESTINATION_END_DATE'))
+                        src_end = self.convert_to_int(dep.get('SOURCE_END_DATE'))
+                        if dest_end > src_end:
+                            has_issues_ref[0] = True
+                            schedule_item['hasIssue'] = True
+                    else:
+                        # For Supporting: issue if destination ends BEFORE source ends
+                        dest_end = self.convert_to_int(dep.get('DESTINATION_END_DATE'))
+                        src_end = self.convert_to_int(dep.get('SOURCE_END_DATE'))
+                        if dest_end < src_end:
+                            has_issues_ref[0] = True
+                            schedule_item['hasIssue'] = True
+                    
+                    schedule_data_list.append(schedule_item)
+                    
+                    # Check for circular reference
+                    dest_layer = dep.get('DESTINATIONLAYER', '')
+                    dest_feature = str(dep.get('DESTINATION_FEATUREID', ''))
+                    
+                    is_circular = any(
+                        s.get('SourceLayer') == dest_layer and 
+                        str(s.get('Id')) == dest_feature 
+                        for s in schedule_data_list
+                    )
+                    
+                    if not is_circular:
+                        # RECURSIVE CALL to follow the dependency chain
+                        rel_id = self.filter_schedule_links(
+                            dest_layer,
+                            dest_feature,
+                            dep.get('DESTINATION_START_DATE', ''),
+                            dep.get('DESTINATION_END_DATE', ''),
+                            dep.get('DESTINATION_DESCRIPTION', ''),
+                            schedule_data_list,
+                            has_issues_ref,
+                            rel_id,
+                            dependency_type,
+                            dependency_list
+                        )
+            else:
+                # No dependencies found - add leaf node
+                schedule_data_list.append({
+                    'Name': description,
+                    'SourceLayer': source_layer,
+                    'Id': source_feature,
+                    'startDate': start_date,
+                    'endDate': end_date,
+                    'RelationId': rel_id,
+                    'hasIssue': False
+                })
+            
+            return rel_id
+            
         except Exception as e:
             self.log(f"Error in filter_schedule_links: {str(e)}")
-        
-        return schedule_data, has_issues
+            return rel_id
     
     def format_date(self, date_val):
-        """Format date value to string"""
+        """Format date value to string (YYYY format for charts)"""
         if date_val is None:
             return None
         if isinstance(date_val, datetime.datetime):
-            return date_val.strftime('%Y-%m-%d')
+            return str(date_val.year)  # Return year only for chart
         if isinstance(date_val, str):
-            return date_val[:10] if len(date_val) >= 10 else date_val
+            # Extract year from date string
+            try:
+                if len(date_val) >= 4:
+                    return date_val[:4]
+            except:
+                pass
         return str(date_val)
     
-    def check_schedule_issue(self, dependency: Dict) -> bool:
-        """Check if there are scheduling issues"""
+    def convert_to_int(self, date_val) -> int:
+        """Convert date to integer year for comparison"""
         try:
-            src_start = dependency.get('SOURCE_START_DATE')
-            src_end = dependency.get('SOURCE_END_DATE')
-            dest_start = dependency.get('DESTINATION_START_DATE')
-            dest_end = dependency.get('DESTINATION_END_DATE')
-            
-            if not all([src_start, src_end, dest_start, dest_end]):
-                return True
-            
-            if isinstance(src_end, str):
-                src_end = datetime.datetime.strptime(src_end[:10], '%Y-%m-%d')
-            if isinstance(dest_start, str):
-                dest_start = datetime.datetime.strptime(dest_start[:10], '%Y-%m-%d')
-            
-            return src_end > dest_start
-        except Exception:
-            return False
+            if date_val is None:
+                return 0
+            if isinstance(date_val, datetime.datetime):
+                return date_val.year
+            if isinstance(date_val, int):
+                return date_val
+            if isinstance(date_val, str):
+                # Try to extract year
+                if len(date_val) >= 4:
+                    return int(date_val[:4])
+            return 0
+        except:
+            return 0
+    
+    def get_spaces(self, schedule_item: Dict) -> str:
+        """Get label with indentation based on RelationId"""
+        rel_id = schedule_item.get('RelationId', 0)
+        name = schedule_item.get('Name', '')
+        spaces = '  ' * (rel_id - 1)  # 2 spaces per level
+        return f"{spaces}{name}"
+    
+    def get_labels_without_spaces(self, schedule_item: Dict) -> str:
+        """Get label without spaces (just the name)"""
+        return schedule_item.get('Name', '')
+    
+    def check_issues_for_depending(self, schedule_data: List[Dict]) -> bool:
+        """Check if there are issues in depending features"""
+        return any(item.get('hasIssue', False) for item in schedule_data)
+    
+    def check_issues_for_supporting(self, schedule_data: List[Dict]) -> bool:
+        """Check if there are issues in supporting features"""
+        return any(item.get('hasIssue', False) for item in schedule_data)
     
     def process_infratagging_summary(self, dependency_type: str) -> List[Dict]:
         """Process infrastructure tagging summary for given type"""
@@ -298,14 +365,36 @@ class InfraTaggingProcessor:
             infra_features = []
             type_id = 0 if dependency_type == "Depending" else 1
             
+            # Track unique features
+            seen_keys = set()
+            
             for dep in self.dependency_all:
                 # Get both layer name and ID from dependency
                 source_layer = dep.get('SOURCELAYER', '')
                 source_layer_id = dep.get('SOURCE_LAYERID')
                 source_feature_id = str(dep.get('SOURCE_FEATUREID', ''))
                 
-                schedule_data, has_issues = self.filter_schedule_links(
-                    source_layer, source_feature_id, dependency_type, self.dependency_all
+                # Create unique key
+                key = (source_feature_id, source_layer_id, type_id)
+                if key in seen_keys:
+                    continue
+                seen_keys.add(key)
+                
+                # Use RECURSIVE filter to build full dependency tree
+                schedule_data_list = []
+                has_issues_ref = [False]  # Use list to pass by reference
+                
+                self.filter_schedule_links(
+                    source_layer,
+                    source_feature_id,
+                    dep.get('SOURCE_START_DATE', ''),
+                    dep.get('SOURCE_END_DATE', ''),
+                    dep.get('SOURCE_DESCRIPTION', ''),
+                    schedule_data_list,
+                    has_issues_ref,
+                    0,  # Initial RelationId
+                    dependency_type,
+                    self.dependency_all
                 )
                 
                 # Try matching by ID first (more reliable), then by name
@@ -315,7 +404,7 @@ class InfraTaggingProcessor:
                 
                 if matched_layer:
                     infra_features.append({
-                        'Category': 1 if has_issues else 0,
+                        'Category': 1 if has_issues_ref[0] else 0,
                         'Type': type_id,
                         'FeatureId': source_feature_id,
                         'Layer_Id': matched_layer.get('LAYER_ID'),
@@ -326,7 +415,7 @@ class InfraTaggingProcessor:
                 else:
                     # Use source_layer_id if available
                     infra_features.append({
-                        'Category': 1 if has_issues else 0,
+                        'Category': 1 if has_issues_ref[0] else 0,
                         'Type': type_id,
                         'FeatureId': source_feature_id,
                         'Layer_Id': source_layer_id if source_layer_id else -1,
@@ -335,45 +424,136 @@ class InfraTaggingProcessor:
                         'ChartHeight': 0
                     })
             
-            unique_features = []
-            seen = set()
-            for feature in infra_features:
-                key = (feature['FeatureId'], feature['Layer_Id'], feature['Type'])
-                if key not in seen:
-                    seen.add(key)
-                    unique_features.append(feature)
-            
-            self.log(f"Processed {len(unique_features)} unique {dependency_type} features")
-            return unique_features
+            self.log(f"Processed {len(infra_features)} unique {dependency_type} features")
+            return infra_features
             
         except Exception as e:
             self.log(f"Error in process_infratagging_summary: {str(e)}")
             raise
     
     def prepare_chart_json_data(self, island_wide_data: Dict) -> str:
-        """Prepare chart JSON data for visualization"""
+        """
+        Prepare Chart.js configuration JSON for visualization.
+        Matches .NET PrepareChartJSONData function exactly.
+        """
         try:
             schedule_data = island_wide_data.get('ScheduleData', [])
             
-            chart_data = {
-                'id': island_wide_data.get('Id', ''),
-                'name': island_wide_data.get('Name', ''),
-                'type': island_wide_data.get('Type', ''),
-                'tasks': []
+            if not schedule_data:
+                return "{}"
+            
+            label_data = []
+            labels_without_spaces = []
+            background_color = []
+            staging_year = []
+            check_distinct_values = []
+            
+            # Check for overall issues
+            has_issue = False
+            if island_wide_data.get('Type') == "Depending":
+                has_issue = self.check_issues_for_depending(schedule_data)
+            else:
+                has_issue = self.check_issues_for_supporting(schedule_data)
+            
+            # Process each schedule item
+            for item in schedule_data:
+                # Check if this combination already exists
+                is_duplicate = any(
+                    d.get('Id') == item.get('Id') and 
+                    d.get('SourceLayer') == item.get('SourceLayer') and 
+                    d.get('RelationId') == item.get('RelationId')
+                    for d in check_distinct_values
+                )
+                
+                if not is_duplicate:
+                    # Add label with indentation
+                    tree_label = self.get_spaces(item)
+                    label_data.append(tree_label)
+                    
+                    # Add label without spaces
+                    labels_without_spaces.append(self.get_labels_without_spaces(item))
+                    
+                    # Add year data [startDate, endDate, SourceLayer]
+                    lst_yr = [
+                        item.get('startDate', ''),
+                        item.get('endDate', ''),
+                        item.get('SourceLayer', '')
+                    ]
+                    staging_year.append(lst_yr)
+                    
+                    # Add background color (red for issues, green for no issues)
+                    color = "rgba(255, 0, 0, 0.5)" if item.get('hasIssue', False) else "rgba(0, 128, 0, 0.5)"
+                    background_color.append(color)
+                    
+                    # Track this item as processed
+                    check_distinct_values.append({
+                        'Id': item.get('Id'),
+                        'Name': item.get('Name'),
+                        'RelationId': item.get('RelationId'),
+                        'SourceLayer': item.get('SourceLayer')
+                    })
+            
+            # If there's an overall issue, mark the first item as red
+            if has_issue and len(background_color) > 0:
+                background_color[0] = "rgba(255, 0, 0, 0.5)"
+            
+            # Build Chart.js configuration JSON string
+            chart_json = {
+                "type": "horizontalBar",
+                "responsive": True,
+                "data": {
+                    "labels": label_data,
+                    "datasets": [{
+                        "backgroundColor": background_color,
+                        "data": staging_year,
+                        "maxBarThickness": 30
+                    }]
+                },
+                "options": {
+                    "maintainAspectRatio": False,
+                    "responsive": False,
+                    "title": {
+                        "display": True,
+                        "text": "Infra Schedules by Year"
+                    },
+                    "legend": {
+                        "display": False
+                    },
+                    "events": ["click", "mousemove"],
+                    "tooltips": {
+                        "callbacks": {}
+                    },
+                    "scales": {
+                        "xAxes": [{
+                            "ticks": {
+                                "stepSize": 1,
+                                "min": 2010,
+                                "max": 2040
+                            }
+                        }],
+                        "yAxes": [{
+                            "ticks": {
+                                "fontSize": 14
+                            }
+                        }]
+                    },
+                    "plugins": {
+                        "datalabels": {
+                            "align": "end",
+                            "anchor": "start",
+                            "font": {
+                                "size": 12,
+                                "weight": 400
+                            },
+                            "color": "white",
+                            "formatter": "function(value){return value[2]}"
+                        }
+                    }
+                }
             }
             
-            for item in schedule_data:
-                task = {
-                    'id': item.get('Id', ''),
-                    'name': item.get('Name', ''),
-                    'start': item.get('startDate', ''),
-                    'end': item.get('endDate', ''),
-                    'relationId': item.get('RelationId', 0),
-                    'hasIssue': item.get('hasIssue', False)
-                }
-                chart_data['tasks'].append(task)
+            return json.dumps(chart_json)
             
-            return json.dumps(chart_data)
         except Exception as e:
             self.log(f"Error in prepare_chart_json_data: {str(e)}")
             return "{}"
@@ -386,7 +566,10 @@ class InfraTaggingProcessor:
     
     def get_schedule_data_island_wide(self, mapping_list: List[Dict], 
                                       dependency_type: str) -> List[Dict]:
-        """Get schedule data for island-wide processing"""
+        """
+        Get schedule data for island-wide processing.
+        Matches .NET GetScheduleDatasIslandWide function.
+        """
         try:
             dependency_raw_all = self.get_dependency_links_all(dependency_type)
             island_wide_data = []
@@ -394,21 +577,66 @@ class InfraTaggingProcessor:
             for item in mapping_list:
                 layer = item['Layer']
                 feature_id = str(item['FeatureId'])
+                item_type = 0 if item['Type'] == 0 else 1
                 
-                schedule_data, has_issues = self.filter_schedule_links(
-                    layer, feature_id, dependency_type, dependency_raw_all
+                # Build schedule data using RECURSIVE filter
+                schedule_data_list = []
+                has_issues_ref = [False]
+                
+                # Get initial dependency to start the recursion
+                initial_dep = next(
+                    (d for d in dependency_raw_all 
+                     if d.get('SOURCELAYER') == layer and 
+                     str(d.get('SOURCE_FEATUREID')) == str(feature_id)),
+                    None
                 )
                 
+                if initial_dep:
+                    self.filter_schedule_links(
+                        layer,
+                        feature_id,
+                        initial_dep.get('SOURCE_START_DATE', ''),
+                        initial_dep.get('SOURCE_END_DATE', ''),
+                        initial_dep.get('SOURCE_DESCRIPTION', ''),
+                        schedule_data_list,
+                        has_issues_ref,
+                        0,
+                        "Depending" if item_type == 0 else "Supporting",
+                        dependency_raw_all
+                    )
+                
+                # Special case: if only 1 schedule item, check if this is actually a destination
+                if len(schedule_data_list) == 1:
+                    filtered_as_dest = [
+                        d for d in dependency_raw_all 
+                        if d.get('DESTINATIONLAYER') == layer and 
+                        str(d.get('DESTINATION_FEATUREID')) == str(feature_id)
+                    ]
+                    
+                    if len(filtered_as_dest) > 0:
+                        schedule_data_list = []
+                        schedule_data_list.append({
+                            'Name': filtered_as_dest[0].get('DESTINATIONLAYER', ''),
+                            'SourceLayer': filtered_as_dest[0].get('DESTINATIONLAYER', ''),
+                            'Id': str(filtered_as_dest[0].get('DESTINATION_FEATUREID', '')),
+                            'startDate': self.format_date(filtered_as_dest[0].get('DESTINATION_START_DATE')),
+                            'endDate': self.format_date(filtered_as_dest[0].get('DESTINATION_END_DATE')),
+                            'RelationId': 1,
+                            'hasIssue': False
+                        })
+                
+                # Create island-wide data item
                 data_item = {
                     'Id': feature_id,
-                    'ScheduleData': schedule_data,
+                    'ScheduleData': schedule_data_list,
                     'LayerId': int(item['Layer_Id']),
                     'Name': layer,
-                    'Type': dependency_type
+                    'Type': "Depending" if item_type == 0 else "Supporting"
                 }
                 
                 island_wide_data.append(data_item)
             
+            # Generate ChartJSON and ChartHeight for each item
             for item in island_wide_data:
                 item['ChartJSON'] = self.prepare_chart_json_data(item)
                 item['ChartHeight'] = self.get_chart_height(len(item['ScheduleData']))
