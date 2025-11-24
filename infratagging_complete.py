@@ -693,27 +693,20 @@ class InfraTaggingProcessor:
                 schedule_data_list = []
                 has_issues_ref = [False]
                 
-                # Get initial dependency to start the recursion
-                initial_dep = next(
-                    (d for d in dependency_raw_all 
-                     if d.get('SOURCELAYER') == layer and 
-                     str(d.get('SOURCE_FEATUREID')) == str(feature_id)),
-                    None
+                # ALWAYS call filter_schedule_links (like .NET does)
+                # Pass empty strings for initial dates/description (will be populated from dependencies)
+                self.filter_schedule_links(
+                    layer,
+                    feature_id,
+                    "",  # startDate - empty initially
+                    "",  # endDate - empty initially
+                    "",  # description - empty initially
+                    schedule_data_list,
+                    has_issues_ref,
+                    0,   # relId starts at 0
+                    "Depending" if item_type == 0 else "Supporting",
+                    dependency_raw_all
                 )
-                
-                if initial_dep:
-                    self.filter_schedule_links(
-                        layer,
-                        feature_id,
-                        initial_dep.get('SOURCE_START_DATE', ''),
-                        initial_dep.get('SOURCE_END_DATE', ''),
-                        initial_dep.get('SOURCE_DESCRIPTION', ''),
-                        schedule_data_list,
-                        has_issues_ref,
-                        0,
-                        "Depending" if item_type == 0 else "Supporting",
-                        dependency_raw_all
-                    )
                 
                 # Special case: if only 1 schedule item, check if this is actually a destination
                 if len(schedule_data_list) == 1:
@@ -726,7 +719,7 @@ class InfraTaggingProcessor:
                     if len(filtered_as_dest) > 0:
                         schedule_data_list = []
                         schedule_data_list.append({
-                            'Name': filtered_as_dest[0].get('DESTINATIONLAYER', ''),
+                            'Name': filtered_as_dest[0].get('DESTINATION_DESCRIPTION', ''),
                             'SourceLayer': filtered_as_dest[0].get('DESTINATIONLAYER', ''),
                             'Id': str(filtered_as_dest[0].get('DESTINATION_FEATUREID', '')),
                             'startDate': self.format_date(filtered_as_dest[0].get('DESTINATION_START_DATE')),
@@ -750,6 +743,14 @@ class InfraTaggingProcessor:
             for item in island_wide_data:
                 item['ChartJSON'] = self.prepare_chart_json_data(item)
                 item['ChartHeight'] = self.get_chart_height(len(item['ScheduleData']))
+            
+            # Log statistics
+            empty_count = sum(1 for item in island_wide_data if len(item['ScheduleData']) == 0)
+            if empty_count > 0:
+                self.log(f"WARNING: {empty_count}/{len(island_wide_data)} features have NO schedule data")
+            
+            avg_schedule_count = sum(len(item['ScheduleData']) for item in island_wide_data) / len(island_wide_data) if island_wide_data else 0
+            self.log(f"Average schedule items per feature: {avg_schedule_count:.2f}")
             
             return island_wide_data
             
