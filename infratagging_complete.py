@@ -537,11 +537,16 @@ class InfraTaggingProcessor:
                     matched_layer = layer_dict_by_name.get(source_layer)
                 
                 if matched_layer:
+                    # Ensure Layer_Id is an integer for consistent matching
+                    layer_id_val = matched_layer.get('LAYER_ID')
+                    if isinstance(layer_id_val, str):
+                        layer_id_val = int(layer_id_val) if layer_id_val.isdigit() else layer_id_val
+                    
                     infra_features.append({
                         'Category': 1 if has_issues_ref[0] else 0,
                         'Type': type_id,
                         'FeatureId': source_feature_id,
-                        'Layer_Id': matched_layer.get('LAYER_ID'),
+                        'Layer_Id': layer_id_val,
                         'Layer': matched_layer.get('LAYER_NAME'),
                         'ChartJSON': None,
                         'ChartHeight': 0
@@ -753,10 +758,21 @@ class InfraTaggingProcessor:
                         })
                 
                 # Create island-wide data item
+                # Ensure LayerId is an integer for consistent matching
+                layer_id_for_chart = item['Layer_Id']
+                if isinstance(layer_id_for_chart, str) and layer_id_for_chart.isdigit():
+                    layer_id_for_chart = int(layer_id_for_chart)
+                elif isinstance(layer_id_for_chart, str):
+                    # Try to convert, default to -1 if not possible
+                    try:
+                        layer_id_for_chart = int(layer_id_for_chart)
+                    except:
+                        layer_id_for_chart = -1
+                
                 data_item = {
                     'Id': feature_id,
                     'ScheduleData': schedule_data_list,
-                    'LayerId': int(item['Layer_Id']),
+                    'LayerId': layer_id_for_chart,
                     'Name': layer,
                     'Type': "Depending" if item_type == 0 else "Supporting"
                 }
@@ -809,10 +825,27 @@ class InfraTaggingProcessor:
             # Update Depending features with chart data AND issue status
             depending_matched = 0
             depending_issues = 0
+            
+            # DEBUG: Log first feature for matching
+            if len(lst_depending) > 0:
+                first_feature = lst_depending[0]
+                self.log(f"DEBUG: First Depending feature - FeatureId='{first_feature['FeatureId']}', Layer_Id={first_feature['Layer_Id']}, Layer='{first_feature['Layer']}'")
+            
+            if len(depending_charts) > 0:
+                first_chart = depending_charts[0]
+                self.log(f"DEBUG: First Depending chart - Id='{first_chart['Id']}', LayerId={first_chart['LayerId']}, Type={type(first_chart['LayerId'])}")
+            
             for feature in lst_depending:
+                # Robust matching - handle both int and string comparisons
+                feature_layer_id = feature['Layer_Id']
                 matching_charts = [c for c in depending_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
-                                 c['LayerId'] == feature['Layer_Id']]
+                                 (c['LayerId'] == feature_layer_id or 
+                                  str(c['LayerId']) == str(feature_layer_id))]
+                
+                if not matching_charts:
+                    self.log(f"DEBUG: No match for Depending feature - FeatureId='{feature['FeatureId']}', Layer_Id={feature['Layer_Id']} (type={type(feature['Layer_Id'])})")
+                
                 if matching_charts:
                     chart_data = matching_charts[0]
                     feature['ChartJSON'] = chart_data['ChartJSON']
@@ -833,9 +866,16 @@ class InfraTaggingProcessor:
             supporting_matched = 0
             supporting_issues = 0
             for feature in lst_supporting:
+                # Robust matching - handle both int and string comparisons
+                feature_layer_id = feature['Layer_Id']
                 matching_charts = [c for c in supporting_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
-                                 c['LayerId'] == feature['Layer_Id']]
+                                 (c['LayerId'] == feature_layer_id or 
+                                  str(c['LayerId']) == str(feature_layer_id))]
+                
+                if not matching_charts:
+                    self.log(f"DEBUG: No match for Supporting feature - FeatureId='{feature['FeatureId']}', Layer_Id={feature['Layer_Id']} (type={type(feature['Layer_Id'])})")
+                
                 if matching_charts:
                     chart_data = matching_charts[0]
                     feature['ChartJSON'] = chart_data['ChartJSON']
