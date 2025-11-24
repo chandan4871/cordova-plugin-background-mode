@@ -491,11 +491,18 @@ class InfraTaggingProcessor:
             layer_dict_by_name = {layer.get('LAYER_NAME'): layer for layer in layers if layer.get('LAYER_NAME')}
             layer_dict_by_id = {layer.get('LAYER_ID'): layer for layer in layers if layer.get('LAYER_ID')}
             
+            # DEBUG: Log available layer IDs
+            self.log(f"DEBUG: Available layer IDs: {list(layer_dict_by_id.keys())[:10]}")
+            self.log(f"DEBUG: Sample layer names: {list(layer_dict_by_name.keys())[:5]}")
+            
             infra_features = []
             type_id = 0 if dependency_type == "Depending" else 1
             
             # Track unique features
             seen_keys = set()
+            
+            # DEBUG: Track unmatched layers
+            unmatched_count = 0
             
             for dep in self.dependency_all:
                 # Get both layer name and ID from dependency
@@ -543,6 +550,10 @@ class InfraTaggingProcessor:
                     })
                 else:
                     # Use source_layer_id if available
+                    unmatched_count += 1
+                    if unmatched_count <= 3:
+                        self.log(f"DEBUG: Layer NOT matched - LayerID={source_layer_id}, LayerName='{source_layer}', FeatureID={source_feature_id}")
+                    
                     infra_features.append({
                         'Category': 1 if has_issues_ref[0] else 0,
                         'Type': type_id,
@@ -552,6 +563,9 @@ class InfraTaggingProcessor:
                         'ChartJSON': None,
                         'ChartHeight': 0
                     })
+            
+            if unmatched_count > 0:
+                self.log(f"WARNING: {unmatched_count} features had unmatched layers")
             
             self.log(f"Processed {len(infra_features)} unique {dependency_type} features")
             return infra_features
@@ -703,10 +717,24 @@ class InfraTaggingProcessor:
             dependency_raw_all = self.get_dependency_links_all(dependency_type)
             island_wide_data = []
             
+            # DEBUG: Log first few items
+            debug_count = 0
+            
             for item in mapping_list:
                 layer = item['Layer']
                 feature_id = str(item['FeatureId'])
                 item_type = 0 if item['Type'] == 0 else 1
+                
+                # DEBUG: Log first 3 features
+                if debug_count < 3:
+                    self.log(f"DEBUG: Processing feature: Layer='{layer}', FeatureId='{feature_id}'")
+                    matching_deps = [d for d in dependency_raw_all 
+                                    if d.get('SOURCELAYER') == layer and 
+                                    str(d.get('SOURCE_FEATUREID')) == str(feature_id)]
+                    self.log(f"DEBUG: Found {len(matching_deps)} matching dependencies")
+                    if len(matching_deps) > 0:
+                        self.log(f"DEBUG: First match: {matching_deps[0].get('DESTINATIONLAYER')} - {matching_deps[0].get('DESTINATION_FEATUREID')}")
+                    debug_count += 1
                 
                 # Build schedule data using RECURSIVE filter
                 schedule_data_list = []
