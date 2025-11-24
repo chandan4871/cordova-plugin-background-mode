@@ -396,7 +396,13 @@ class InfraTaggingProcessor:
                     parent_end = self.convert_to_int(parent_item.get('endDate'))
                     
                     # If child ends after parent OR child already has issue
-                    if item_end > parent_end or item.get('hasIssue', False):
+                    if item_end > 0 and parent_end > 0:  # Only compare if both have valid dates
+                        if item_end > parent_end or item.get('hasIssue', False):
+                            schedule_data[i]['hasIssue'] = True
+                            schedule_data[parent_index]['hasIssue'] = True
+                            has_issue = True
+                    elif item.get('hasIssue', False):
+                        # Propagate existing issues even without dates
                         schedule_data[i]['hasIssue'] = True
                         schedule_data[parent_index]['hasIssue'] = True
                         has_issue = True
@@ -448,7 +454,13 @@ class InfraTaggingProcessor:
                     item_end = self.convert_to_int(item.get('endDate'))
                     
                     # If child ends before parent OR child already has issue
-                    if child_end < item_end or child_item.get('hasIssue', False):
+                    if child_end > 0 and item_end > 0:  # Only compare if both have valid dates
+                        if child_end < item_end or child_item.get('hasIssue', False):
+                            schedule_data[i]['hasIssue'] = True
+                            schedule_data[child_index]['hasIssue'] = True
+                            has_issue = True
+                    elif child_item.get('hasIssue', False):
+                        # Propagate existing issues even without dates
                         schedule_data[i]['hasIssue'] = True
                         schedule_data[child_index]['hasIssue'] = True
                         has_issue = True
@@ -739,7 +751,21 @@ class InfraTaggingProcessor:
                 
                 island_wide_data.append(data_item)
             
-            # Generate ChartJSON and ChartHeight for each item
+            # First, run issue detection to update hasIssue flags in schedule data
+            issue_count = 0
+            for item in island_wide_data:
+                if len(item['ScheduleData']) > 0:
+                    if item['Type'] == "Depending":
+                        has_issue = self.check_issues_for_depending(item['ScheduleData'])
+                    else:
+                        has_issue = self.check_issues_for_supporting(item['ScheduleData'])
+                    
+                    if has_issue:
+                        issue_count += 1
+            
+            self.log(f"Issue detection: {issue_count}/{len(island_wide_data)} features have scheduling issues")
+            
+            # Then generate ChartJSON and ChartHeight (uses updated hasIssue flags)
             for item in island_wide_data:
                 item['ChartJSON'] = self.prepare_chart_json_data(item)
                 item['ChartHeight'] = self.get_chart_height(len(item['ScheduleData']))
@@ -768,31 +794,51 @@ class InfraTaggingProcessor:
             self.log("Generating chart data for Supporting features...")
             supporting_charts = self.get_schedule_data_island_wide(lst_supporting, "Supporting")
             
-            # Update Depending features with chart data
+            # Update Depending features with chart data AND issue status
             depending_matched = 0
+            depending_issues = 0
             for feature in lst_depending:
                 matching_charts = [c for c in depending_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
                                  c['LayerId'] == feature['Layer_Id']]
                 if matching_charts:
-                    feature['ChartJSON'] = matching_charts[0]['ChartJSON']
-                    feature['ChartHeight'] = matching_charts[0]['ChartHeight']
+                    chart_data = matching_charts[0]
+                    feature['ChartJSON'] = chart_data['ChartJSON']
+                    feature['ChartHeight'] = chart_data['ChartHeight']
+                    
+                    # Update Category based on detected issues in schedule data
+                    has_issue = any(item.get('hasIssue', False) for item in chart_data.get('ScheduleData', []))
+                    if has_issue:
+                        feature['Category'] = 1  # Has issues
+                        depending_issues += 1
+                    
                     depending_matched += 1
             
             self.log(f"Matched chart data for {depending_matched}/{len(lst_depending)} Depending features")
+            self.log(f"Depending: {depending_issues} features WITH issues, {depending_matched - depending_issues} WITHOUT issues")
             
-            # Update Supporting features with chart data
+            # Update Supporting features with chart data AND issue status
             supporting_matched = 0
+            supporting_issues = 0
             for feature in lst_supporting:
                 matching_charts = [c for c in supporting_charts 
                                  if str(c['Id']) == str(feature['FeatureId']) and 
                                  c['LayerId'] == feature['Layer_Id']]
                 if matching_charts:
-                    feature['ChartJSON'] = matching_charts[0]['ChartJSON']
-                    feature['ChartHeight'] = matching_charts[0]['ChartHeight']
+                    chart_data = matching_charts[0]
+                    feature['ChartJSON'] = chart_data['ChartJSON']
+                    feature['ChartHeight'] = chart_data['ChartHeight']
+                    
+                    # Update Category based on detected issues in schedule data
+                    has_issue = any(item.get('hasIssue', False) for item in chart_data.get('ScheduleData', []))
+                    if has_issue:
+                        feature['Category'] = 1  # Has issues
+                        supporting_issues += 1
+                    
                     supporting_matched += 1
             
             self.log(f"Matched chart data for {supporting_matched}/{len(lst_supporting)} Supporting features")
+            self.log(f"Supporting: {supporting_issues} features WITH issues, {supporting_matched - supporting_issues} WITHOUT issues")
             
             self.save_to_cache_table(lst_depending, lst_supporting)
             
