@@ -172,6 +172,11 @@ class InfraTaggingProcessor:
                 src_stage = staging_dict.get((source_layer_id, source_feature_id), {})
                 dest_stage = staging_dict.get((dest_layer_id, dest_feature_id), {})
                 
+                # Build SOURCE_DESCRIPTION and DESTINATION_DESCRIPTION
+                # COALESCE(DESCRIPTION, LAYER_NAME + ' - ' + FEATUREID)
+                src_description = src_stage.get('DESCRIPTION') if src_stage.get('DESCRIPTION') else f"{src_layer.get('LAYER_NAME', '')} - {source_feature_id}"
+                dest_description = dest_stage.get('DESCRIPTION') if dest_stage.get('DESCRIPTION') else f"{dest_layer.get('LAYER_NAME', '')} - {dest_feature_id}"
+                
                 result = {
                     'SOURCE_FEATUREID': source_feature_id,
                     'SOURCE_LAYERID': source_layer_id,
@@ -183,6 +188,8 @@ class InfraTaggingProcessor:
                     'SOURCE_END_DATE': src_stage.get('END_DATE'),
                     'DESTINATION_START_DATE': dest_stage.get('START_DATE'),
                     'DESTINATION_END_DATE': dest_stage.get('END_DATE'),
+                    'SOURCE_DESCRIPTION': src_description,
+                    'DESTINATION_DESCRIPTION': dest_description,
                     'CREATEDDATE': mapping.get('CREATEDDATE'),
                     'OFFICER': mapping.get('OFFICER')
                 }
@@ -225,13 +232,13 @@ class InfraTaggingProcessor:
             
             if len(filtered) > 0:
                 for dep in filtered:
-                    # Add schedule data for this dependency
+                    # Add schedule data for this dependency (use DESTINATION data!)
                     schedule_item = {
-                        'Name': dep.get('SOURCE_DESCRIPTION', ''),
-                        'SourceLayer': dep.get('SOURCELAYER', ''),
-                        'Id': str(dep.get('SOURCE_FEATUREID', '')),
-                        'startDate': self.format_date(dep.get('SOURCE_START_DATE')),
-                        'endDate': self.format_date(dep.get('SOURCE_END_DATE')),
+                        'Name': dep.get('DESTINATION_DESCRIPTION', ''),
+                        'SourceLayer': dep.get('DESTINATIONLAYER', ''),
+                        'Id': str(dep.get('DESTINATION_FEATUREID', '')),
+                        'startDate': self.format_date(dep.get('DESTINATION_START_DATE')),
+                        'endDate': self.format_date(dep.get('DESTINATION_END_DATE')),
                         'RelationId': rel_id,
                         'hasIssue': False
                     }
@@ -265,10 +272,10 @@ class InfraTaggingProcessor:
                     )
                     
                     if not is_circular:
-                        # RECURSIVE CALL to follow the dependency chain
+                        # RECURSIVE CALL - continue from destination (becomes new source)
                         rel_id = self.filter_schedule_links(
-                            dest_layer,
-                            dest_feature,
+                            dest_layer,  # This becomes the new source layer
+                            dest_feature,  # This becomes the new source feature
                             dep.get('DESTINATION_START_DATE', ''),
                             dep.get('DESTINATION_END_DATE', ''),
                             dep.get('DESTINATION_DESCRIPTION', ''),
