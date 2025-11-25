@@ -61,7 +61,7 @@ class InfraTaggingProcessor:
             self.db_conn = arcpy.ArcSDESQLExecute(self.sde_path)
             self.log("SDE connection initialized successfully")
         except Exception as e:
-            self.log(f"Error initializing SDE connection: {str(e)}")
+            self.log(f"Error initializing SDE connection: {str(e)}", "ERROR")
             raise
     
     def _setup_logging(self):
@@ -76,13 +76,26 @@ class InfraTaggingProcessor:
             level=getattr(logging, LOG_LEVEL)
         )
     
-    def log(self, message: str):
-        """Add message to log"""
+    def log(self, message: str, message_type: str = "INFO"):
+        """
+        Add message to log and ArcGIS messages.
+        message_type: INFO, WARNING, ERROR
+        """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"[{timestamp}] {message}"
         self.log_messages.append(log_entry)
         print(log_entry)
-        logging.info(message)
+        
+        # Add to ArcGIS messages (works in GP tools and ArcGIS Server)
+        if message_type == "ERROR":
+            arcpy.AddError(message)
+            logging.error(message)
+        elif message_type == "WARNING":
+            arcpy.AddWarning(message)
+            logging.warning(message)
+        else:
+            arcpy.AddMessage(message)
+            logging.info(message)
     
     def execute_sql_query(self, table_name: str, where_clause: str = "") -> List:
         """Execute SQL query using SearchCursor for better reliability"""
@@ -105,7 +118,7 @@ class InfraTaggingProcessor:
             
             return results
         except Exception as e:
-            self.log(f"Error in execute_sql_query for {table_name}: {str(e)}")
+            self.log(f"Error in execute_sql_query for {table_name}: {str(e)}", "ERROR")
             return []
     
     def execute_sql_direct(self, sql: str):
@@ -115,7 +128,7 @@ class InfraTaggingProcessor:
             result = sde.execute(sql)
             return result
         except Exception as ex:
-            self.log(f"SQL execution failed: {str(ex)}")
+            self.log(f"SQL execution failed: {str(ex)}", "ERROR")
             raise
     
     def get_dependency_links_all(self, dependency_type: str) -> List[Dict]:
@@ -203,7 +216,7 @@ class InfraTaggingProcessor:
             return results
             
         except Exception as e:
-            self.log(f"Error in get_dependency_links_all: {str(e)}")
+            self.log(f"Error in get_dependency_links_all: {str(e)}", "ERROR")
             raise
     
     def get_infra_layers(self) -> List[Dict]:
@@ -801,7 +814,7 @@ class InfraTaggingProcessor:
             # Log statistics
             empty_count = sum(1 for item in island_wide_data if len(item['ScheduleData']) == 0)
             if empty_count > 0:
-                self.log(f"WARNING: {empty_count}/{len(island_wide_data)} features have NO schedule data")
+                self.log(f"{empty_count}/{len(island_wide_data)} features have NO schedule data", "WARNING")
             
             avg_schedule_count = sum(len(item['ScheduleData']) for item in island_wide_data) / len(island_wide_data) if island_wide_data else 0
             self.log(f"Average schedule items per feature: {avg_schedule_count:.2f}")
@@ -809,7 +822,7 @@ class InfraTaggingProcessor:
             return island_wide_data
             
         except Exception as e:
-            self.log(f"Error in get_schedule_data_island_wide: {str(e)}")
+            self.log(f"Error in get_schedule_data_island_wide: {str(e)}", "ERROR")
             raise
     
     def add_to_summary_cache_results(self, lst_depending: List[Dict], 
@@ -895,7 +908,7 @@ class InfraTaggingProcessor:
             self.save_to_cache_table(lst_depending, lst_supporting)
             
         except Exception as e:
-            self.log(f"Error in add_to_summary_cache_results: {str(e)}")
+            self.log(f"Error in add_to_summary_cache_results: {str(e)}", "ERROR")
             raise
     
     def save_to_cache_table(self, lst_depending: List[Dict], lst_supporting: List[Dict]):
@@ -946,8 +959,8 @@ class InfraTaggingProcessor:
             self.log(f"Successfully saved {total_inserted} records to cache table")
             
         except Exception as e:
-            self.log(f"Error in save_to_cache_table: {str(e)}")
-            self.log(f"Full error: {traceback.format_exc()}")
+            self.log(f"Error in save_to_cache_table: {str(e)}", "ERROR")
+            self.log(f"Full error: {traceback.format_exc()}", "ERROR")
             raise
     
     def execute(self) -> str:
@@ -955,23 +968,33 @@ class InfraTaggingProcessor:
         status = "Failed"
         
         try:
+            # Setup ArcGIS progressor
+            arcpy.SetProgressor("default", "Starting Infratagging Summary Generation...")
+            
             self.log("="*80)
             self.log("Started Infratagging Summary Generation Job")
             self.log("="*80)
             
+            # Step 1: Process Depending Features
+            arcpy.SetProgressorLabel("Processing Depending Features...")
             self.log("Executing for Depending Features")
             lst_depending = self.process_infratagging_summary("Depending")
             self.log(f"Depending Features execution completed. Total Count: {len(lst_depending)}")
             
+            # Step 2: Process Supporting Features
+            arcpy.SetProgressorLabel("Processing Supporting Features...")
             self.log("Executing for Supporting Features")
             lst_supporting = self.process_infratagging_summary("Supporting")
             self.log(f"Supporting Features execution completed. Total Count: {len(lst_supporting)}")
             
+            # Step 3: Update Cache
+            arcpy.SetProgressorLabel("Updating Infratagging Cache table...")
             self.log("Updating Infratagging Cache table")
             self.add_to_summary_cache_results(lst_depending, lst_supporting)
             self.log("Update successful to Infratagging Cache table")
             
             status = "Success"
+            arcpy.ResetProgressor()
             self.log("="*80)
             
             # Print summary
@@ -984,8 +1007,9 @@ class InfraTaggingProcessor:
             print("="*80)
             
         except Exception as e:
-            self.log(f"ERROR: {str(e)}")
-            self.log(traceback.format_exc())
+            arcpy.ResetProgressor()
+            self.log(f"ERROR: {str(e)}", "ERROR")
+            self.log(traceback.format_exc(), "ERROR")
             status = "Failed"
         
         return status
