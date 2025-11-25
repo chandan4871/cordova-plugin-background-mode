@@ -1,0 +1,26 @@
+# Python dependencies for Infrastructure Tagging GP Script (SDE Version)
+
+# NO ADDITIONAL PACKAGES REQUIRED!
+# This version uses only arcpy which is included with ArcGIS Pro/Server
+
+# arcpy is included with:
+# - ArcGIS Pro 2.8+
+# - ArcGIS Server 10.8+
+# - ArcGIS Enterprise
+
+# Standard library modules used:
+# - sys (built-in)
+# - time (built-in)
+# - json (built-in)
+# - logging (built-in)
+# - os (built-in)
+# - datetime (built-in)
+# - traceback (built-in)
+# - typing (built-in)
+# - smtplib (built-in) - for email notifications
+# - email.mime (built-in) - for email formatting
+
+# Database connectivity:
+# - arcpy.ArcSDESQLExecute (included with arcpy)
+
+# Note: If you need the pyodbc version instead, see requirements.txt

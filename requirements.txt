@@ -1,0 +1,8 @@
+# Python dependencies for Infrastructure Tagging GP Script
+# Install with: pip install -r requirements.txt
+
+# Database connectivity
+pyodbc>=4.0.30
+
+# Note: arcpy is included with ArcGIS Pro/Server installation
+# These are the only additional dependencies needed
