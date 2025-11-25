@@ -89,26 +89,30 @@ class InfraTaggingProcessor:
         """
         Add message to log and ArcGIS messages.
         message_type: INFO, WARNING, ERROR
-        Prints immediately in real-time during script execution.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"[{timestamp}] {message}"
         self.log_messages.append(log_entry)
         
-        # Print to console immediately (flush ensures real-time output)
-        print(log_entry)
-        sys.stdout.flush()  # Force immediate output
-        
-        # Add to ArcGIS messages (works in GP tools and ArcGIS Server)
+        # ALWAYS call arcpy.AddMessage FIRST (like working script)
         if message_type == "ERROR":
             arcpy.AddError(message)
-            logging.error(message)
         elif message_type == "WARNING":
             arcpy.AddWarning(message)
-            logging.warning(message)
         else:
             arcpy.AddMessage(message)
+        
+        # Then log to file
+        if message_type == "ERROR":
+            logging.error(message)
+        elif message_type == "WARNING":
+            logging.warning(message)
+        else:
             logging.info(message)
+        
+        # Finally print to console
+        print(log_entry)
+        sys.stdout.flush()
     
     def execute_sql_query(self, table_name: str, where_clause: str = "") -> List:
         """Execute SQL query using SearchCursor for better reliability"""
