@@ -918,10 +918,20 @@ class InfraTaggingProcessor:
             # Log how many records will be inserted
             self.log("="*80)
             self.log(f"INSERTING RECORDS TO CACHE TABLE:")
+            arcpy.AddMessage("="*80)
+            arcpy.AddMessage(f"INSERTING RECORDS TO CACHE TABLE:")
+            
             self.log(f"  - Depending Features: {len(lst_depending)}")
+            arcpy.AddMessage(f"  - Depending Features: {len(lst_depending)}")
+            
             self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            arcpy.AddMessage(f"  - Supporting Features: {len(lst_supporting)}")
+            
             self.log(f"  - Total Records to Insert: {total_to_insert}")
+            arcpy.AddMessage(f"  - Total Records to Insert: {total_to_insert}")
+            
             self.log("="*80)
+            arcpy.AddMessage("="*80)
             
             total_inserted = 0
             
@@ -949,14 +959,26 @@ class InfraTaggingProcessor:
                     if total_inserted % 100 == 0:
                         progress_msg = f"Progress: {total_inserted}/{total_to_insert} records inserted ({int(total_inserted/total_to_insert*100)}%)"
                         self.log(progress_msg)
+                        arcpy.AddMessage(progress_msg)
             
             # Final summary
             self.log("="*80)
+            arcpy.AddMessage("="*80)
+            
             self.log(f"✓ INSERTION COMPLETED SUCCESSFULLY")
+            arcpy.AddMessage(f"✓ INSERTION COMPLETED SUCCESSFULLY")
+            
             self.log(f"  - Total Records Inserted: {total_inserted}")
+            arcpy.AddMessage(f"  - Total Records Inserted: {total_inserted}")
+            
             self.log(f"  - Depending Features: {len(lst_depending)}")
+            arcpy.AddMessage(f"  - Depending Features: {len(lst_depending)}")
+            
             self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            arcpy.AddMessage(f"  - Supporting Features: {len(lst_supporting)}")
+            
             self.log("="*80)
+            arcpy.AddMessage("="*80)
             
         except Exception as e:
             self.log(f"Error in save_to_cache_table: {str(e)}", "ERROR")
@@ -972,26 +994,43 @@ class InfraTaggingProcessor:
             arcpy.SetProgressor("default", "Starting Infratagging Summary Generation...")
             
             self.log("="*80)
+            arcpy.AddMessage("="*80)
+            
             self.log("Started Infratagging Summary Generation Job")
+            arcpy.AddMessage("Started Infratagging Summary Generation Job")
+            
             self.log("="*80)
+            arcpy.AddMessage("="*80)
             
             # Step 1: Process Depending Features
             arcpy.SetProgressorLabel("Processing Depending Features...")
             self.log("Executing for Depending Features")
+            arcpy.AddMessage("Executing for Depending Features")
+            
             lst_depending = self.process_infratagging_summary("Depending")
+            
             self.log(f"Depending Features execution completed. Total Count: {len(lst_depending)}")
+            arcpy.AddMessage(f"Depending Features execution completed. Total Count: {len(lst_depending)}")
             
             # Step 2: Process Supporting Features
             arcpy.SetProgressorLabel("Processing Supporting Features...")
             self.log("Executing for Supporting Features")
+            arcpy.AddMessage("Executing for Supporting Features")
+            
             lst_supporting = self.process_infratagging_summary("Supporting")
+            
             self.log(f"Supporting Features execution completed. Total Count: {len(lst_supporting)}")
+            arcpy.AddMessage(f"Supporting Features execution completed. Total Count: {len(lst_supporting)}")
             
             # Step 3: Update Cache
             arcpy.SetProgressorLabel("Updating Infratagging Cache table...")
             self.log("Updating Infratagging Cache table")
+            arcpy.AddMessage("Updating Infratagging Cache table")
+            
             self.add_to_summary_cache_results(lst_depending, lst_supporting)
+            
             self.log("Update successful to Infratagging Cache table")
+            arcpy.AddMessage("Update successful to Infratagging Cache table")
             
             status = "Success"
             arcpy.ResetProgressor()
@@ -999,13 +1038,28 @@ class InfraTaggingProcessor:
             # Final summary
             total_records = len(lst_depending) + len(lst_supporting)
             self.log("="*80)
+            arcpy.AddMessage("="*80)
+            
             self.log("JOB COMPLETED SUCCESSFULLY!")
+            arcpy.AddMessage("JOB COMPLETED SUCCESSFULLY!")
+            
             self.log("="*80)
+            arcpy.AddMessage("="*80)
+            
             self.log(f"FINAL SUMMARY:")
+            arcpy.AddMessage(f"FINAL SUMMARY:")
+            
             self.log(f"  - Depending Features Processed: {len(lst_depending)}")
+            arcpy.AddMessage(f"  - Depending Features Processed: {len(lst_depending)}")
+            
             self.log(f"  - Supporting Features Processed: {len(lst_supporting)}")
+            arcpy.AddMessage(f"  - Supporting Features Processed: {len(lst_supporting)}")
+            
             self.log(f"  - Total Records Inserted to Cache Table: {total_records}")
+            arcpy.AddMessage(f"  - Total Records Inserted to Cache Table: {total_records}")
+            
             self.log("="*80)
+            arcpy.AddMessage("="*80)
             
             # Print summary to console
             print("\n" + "="*80)
