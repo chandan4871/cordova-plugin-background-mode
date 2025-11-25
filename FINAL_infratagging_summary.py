@@ -1,17 +1,15 @@
-"""
-========================================================================
-Infrastructure Tagging Summary Generation - COMPLETE WORKING VERSION
-========================================================================
-This script processes infrastructure tagging summaries for Depending 
-and Supporting features and caches results with chart data.
-
-Usage:
-    python infratagging_complete.py
-
-Edit the CONFIGURATION section below with your settings.
-========================================================================
-"""
-
+#-------------------------------------------------------------------------------
+# Name:        GenerateInfrataggingSummaryIslandWide
+# Purpose:     This script processes infrastructure tagging summaries for Depending and Supporting features and caches results with chart data.
+#
+# Author:      Mrunmayee Rath
+#
+# Created:     25/11/2025
+# Copyright:   (c) Onetool 2025
+# Licence:     <your licence>
+# Updated By:   Mrunmayee Rath
+# Last Updated: 25/11/2025
+#-------------------------------------------------------------------------------
 import sys
 import time
 import json
@@ -28,11 +26,11 @@ from arcpy import da
 # ========================================================================
 
 # Database Connection
-SDE_PATH = r"C:\temp\SDE_Conn\ONETOOLDEV_ONETOOL_ARCGIS_CONN_SQL.sde"
+SDE_PATH = r"\\urasvr579\\Data\\OneTool\\SDE_Conn\\ONETOOLDEV_ONETOOL_ARCGIS_CONN_SQL.sde"
 APP_SCHEMA = "ONETOOLAPP."  # Must include trailing dot!
 
 # Logging
-LOG_FOLDER = r"C:\temp\GPLogs"
+LOG_FOLDER = r"Y:\logfiles\GPLogs"
 LOG_LEVEL = "INFO"  # DEBUG, INFO, WARNING, ERROR
 
 # Processing Options
@@ -69,7 +67,7 @@ class InfraTaggingProcessor:
         if not os.path.exists(LOG_FOLDER):
             os.makedirs(LOG_FOLDER)
         
-        log_file = time.strftime("%Y%m%d") + "_InfraTaggingSummary.log"
+        log_file = time.strftime("%Y%m%d") + "_GenerateInfrataggingSummaryIslandWide.log"
         logging.basicConfig(
             filename=os.path.join(LOG_FOLDER, log_file),
             format='%(asctime)s - %(levelname)s - %(message)s',
@@ -103,7 +101,7 @@ class InfraTaggingProcessor:
             full_table_path = os.path.join(self.sde_path, table_name)
             
             if not arcpy.Exists(full_table_path):
-                self.log(f"Table does not exist: {full_table_path}")
+                self.log(f"Table does not exist: {full_table_path}", "ERROR")
                 return []
             
             results = []
@@ -226,7 +224,7 @@ class InfraTaggingProcessor:
             results = self.execute_sql_query(table_name)
             return results
         except Exception as e:
-            self.log(f"Error in get_infra_layers: {str(e)}")
+            self.log(f"Error in get_infra_layers: {str(e)}", "ERROR")
             raise
     
     def filter_schedule_links(self, source_layer: str, source_feature: str, 
@@ -316,7 +314,7 @@ class InfraTaggingProcessor:
             return rel_id
             
         except Exception as e:
-            self.log(f"Error in filter_schedule_links: {str(e)}")
+            self.log(f"Error in filter_schedule_links: {str(e)}", "ERROR")
             return rel_id
     
     def format_date(self, date_val):
@@ -430,7 +428,7 @@ class InfraTaggingProcessor:
                         schedule_data[parent_index]['hasIssue'] = True
                         has_issue = True
         except Exception as e:
-            self.log(f"Error in check_issues_for_depending: {str(e)}")
+            self.log(f"Error in check_issues_for_depending: {str(e)}", "ERROR")
         
         return has_issue
     
@@ -488,7 +486,7 @@ class InfraTaggingProcessor:
                         schedule_data[child_index]['hasIssue'] = True
                         has_issue = True
         except Exception as e:
-            self.log(f"Error in check_issues_for_supporting: {str(e)}")
+            self.log(f"Error in check_issues_for_supporting: {str(e)}", "ERROR")
         
         return has_issue
     
@@ -580,7 +578,7 @@ class InfraTaggingProcessor:
             return infra_features
             
         except Exception as e:
-            self.log(f"Error in process_infratagging_summary: {str(e)}")
+            self.log(f"Error in process_infratagging_summary: {str(e)}", "ERROR")
             raise
     
     def prepare_chart_json_data(self, island_wide_data: Dict) -> str:
@@ -707,7 +705,7 @@ class InfraTaggingProcessor:
             return json.dumps(chart_json)
             
         except Exception as e:
-            self.log(f"Error in prepare_chart_json_data: {str(e)}")
+            self.log(f"Error in prepare_chart_json_data: {str(e)}", "ERROR")
             return "{}"
     
     def get_chart_height(self, schedule_count: int) -> int:
@@ -839,15 +837,6 @@ class InfraTaggingProcessor:
             depending_matched = 0
             depending_issues = 0
             
-            # DEBUG: Log first feature for matching
-            if len(lst_depending) > 0:
-                first_feature = lst_depending[0]
-                self.log(f"DEBUG: First Depending feature - FeatureId='{first_feature['FeatureId']}', Layer_Id={first_feature['Layer_Id']}, Layer='{first_feature['Layer']}'")
-            
-            if len(depending_charts) > 0:
-                first_chart = depending_charts[0]
-                self.log(f"DEBUG: First Depending chart - Id='{first_chart['Id']}', LayerId={first_chart['LayerId']}, Type={type(first_chart['LayerId'])}")
-            
             for feature in lst_depending:
                 # Robust matching - handle both int and string comparisons
                 feature_layer_id = feature['Layer_Id']
@@ -855,9 +844,6 @@ class InfraTaggingProcessor:
                                  if str(c['Id']) == str(feature['FeatureId']) and 
                                  (c['LayerId'] == feature_layer_id or 
                                   str(c['LayerId']) == str(feature_layer_id))]
-                
-                if not matching_charts:
-                    self.log(f"DEBUG: No match for Depending feature - FeatureId='{feature['FeatureId']}', Layer_Id={feature['Layer_Id']} (type={type(feature['Layer_Id'])})")
                 
                 if matching_charts:
                     chart_data = matching_charts[0]
@@ -885,9 +871,6 @@ class InfraTaggingProcessor:
                                  if str(c['Id']) == str(feature['FeatureId']) and 
                                  (c['LayerId'] == feature_layer_id or 
                                   str(c['LayerId']) == str(feature_layer_id))]
-                
-                if not matching_charts:
-                    self.log(f"DEBUG: No match for Supporting feature - FeatureId='{feature['FeatureId']}', Layer_Id={feature['Layer_Id']} (type={type(feature['Layer_Id'])})")
                 
                 if matching_charts:
                     chart_data = matching_charts[0]
@@ -930,6 +913,16 @@ class InfraTaggingProcessor:
             
             # Step 2: Insert using InsertCursor (OBJECTID auto-generated)
             all_features = lst_depending + lst_supporting
+            total_to_insert = len(all_features)
+            
+            # Log how many records will be inserted
+            self.log("="*80)
+            self.log(f"INSERTING RECORDS TO CACHE TABLE:")
+            self.log(f"  - Depending Features: {len(lst_depending)}")
+            self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            self.log(f"  - Total Records to Insert: {total_to_insert}")
+            self.log("="*80)
+            
             total_inserted = 0
             
             # Define fields to insert (NO OBJECTID - it's auto-generated!)
@@ -954,9 +947,16 @@ class InfraTaggingProcessor:
                     total_inserted += 1
                     
                     if total_inserted % 100 == 0:
-                        self.log(f"Inserted {total_inserted} records...")
+                        progress_msg = f"Progress: {total_inserted}/{total_to_insert} records inserted ({int(total_inserted/total_to_insert*100)}%)"
+                        self.log(progress_msg)
             
-            self.log(f"Successfully saved {total_inserted} records to cache table")
+            # Final summary
+            self.log("="*80)
+            self.log(f"✓ INSERTION COMPLETED SUCCESSFULLY")
+            self.log(f"  - Total Records Inserted: {total_inserted}")
+            self.log(f"  - Depending Features: {len(lst_depending)}")
+            self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            self.log("="*80)
             
         except Exception as e:
             self.log(f"Error in save_to_cache_table: {str(e)}", "ERROR")
@@ -995,15 +995,25 @@ class InfraTaggingProcessor:
             
             status = "Success"
             arcpy.ResetProgressor()
+            
+            # Final summary
+            total_records = len(lst_depending) + len(lst_supporting)
+            self.log("="*80)
+            self.log("JOB COMPLETED SUCCESSFULLY!")
+            self.log("="*80)
+            self.log(f"FINAL SUMMARY:")
+            self.log(f"  - Depending Features Processed: {len(lst_depending)}")
+            self.log(f"  - Supporting Features Processed: {len(lst_supporting)}")
+            self.log(f"  - Total Records Inserted to Cache Table: {total_records}")
             self.log("="*80)
             
-            # Print summary
+            # Print summary to console
             print("\n" + "="*80)
-            print("SUMMARY")
+            print("FINAL SUMMARY")
             print("="*80)
             print(f"Depending Features: {len(lst_depending)}")
             print(f"Supporting Features: {len(lst_supporting)}")
-            print(f"Total Features: {len(lst_depending) + len(lst_supporting)}")
+            print(f"Total Records Inserted: {total_records}")
             print("="*80)
             
         except Exception as e:
@@ -1047,6 +1057,7 @@ def main():
             
     except Exception as e:
         print(f"Fatal error: {str(e)}")
+        arcpy.AddError(f"Fatal error: {str(e)}")
         traceback.print_exc()
         return 1
 

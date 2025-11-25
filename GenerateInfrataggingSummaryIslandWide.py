@@ -913,6 +913,16 @@ class InfraTaggingProcessor:
             
             # Step 2: Insert using InsertCursor (OBJECTID auto-generated)
             all_features = lst_depending + lst_supporting
+            total_to_insert = len(all_features)
+            
+            # Log how many records will be inserted
+            self.log("="*80)
+            self.log(f"INSERTING RECORDS TO CACHE TABLE:")
+            self.log(f"  - Depending Features: {len(lst_depending)}")
+            self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            self.log(f"  - Total Records to Insert: {total_to_insert}")
+            self.log("="*80)
+            
             total_inserted = 0
             
             # Define fields to insert (NO OBJECTID - it's auto-generated!)
@@ -937,9 +947,16 @@ class InfraTaggingProcessor:
                     total_inserted += 1
                     
                     if total_inserted % 100 == 0:
-                        self.log(f"Inserted {total_inserted} records...")
+                        progress_msg = f"Progress: {total_inserted}/{total_to_insert} records inserted ({int(total_inserted/total_to_insert*100)}%)"
+                        self.log(progress_msg)
             
-            self.log(f"Successfully saved {total_inserted} records to cache table")
+            # Final summary
+            self.log("="*80)
+            self.log(f"✓ INSERTION COMPLETED SUCCESSFULLY")
+            self.log(f"  - Total Records Inserted: {total_inserted}")
+            self.log(f"  - Depending Features: {len(lst_depending)}")
+            self.log(f"  - Supporting Features: {len(lst_supporting)}")
+            self.log("="*80)
             
         except Exception as e:
             self.log(f"Error in save_to_cache_table: {str(e)}", "ERROR")
@@ -978,15 +995,25 @@ class InfraTaggingProcessor:
             
             status = "Success"
             arcpy.ResetProgressor()
+            
+            # Final summary
+            total_records = len(lst_depending) + len(lst_supporting)
+            self.log("="*80)
+            self.log("JOB COMPLETED SUCCESSFULLY!")
+            self.log("="*80)
+            self.log(f"FINAL SUMMARY:")
+            self.log(f"  - Depending Features Processed: {len(lst_depending)}")
+            self.log(f"  - Supporting Features Processed: {len(lst_supporting)}")
+            self.log(f"  - Total Records Inserted to Cache Table: {total_records}")
             self.log("="*80)
             
-            # Print summary
+            # Print summary to console
             print("\n" + "="*80)
-            print("SUMMARY")
+            print("FINAL SUMMARY")
             print("="*80)
             print(f"Depending Features: {len(lst_depending)}")
             print(f"Supporting Features: {len(lst_supporting)}")
-            print(f"Total Features: {len(lst_depending) + len(lst_supporting)}")
+            print(f"Total Records Inserted: {total_records}")
             print("="*80)
             
         except Exception as e:
