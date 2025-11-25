@@ -78,11 +78,15 @@ class InfraTaggingProcessor:
         """
         Add message to log and ArcGIS messages.
         message_type: INFO, WARNING, ERROR
+        Prints immediately in real-time during script execution.
         """
         timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         log_entry = f"[{timestamp}] {message}"
         self.log_messages.append(log_entry)
+        
+        # Print to console immediately (flush ensures real-time output)
         print(log_entry)
+        sys.stdout.flush()  # Force immediate output
         
         # Add to ArcGIS messages (works in GP tools and ArcGIS Server)
         if message_type == "ERROR":
@@ -138,9 +142,11 @@ class InfraTaggingProcessor:
                 table_name = self.app_schema.rstrip('.') + ".INFRATAGGING_MAPPING_SUPP_VW"
             
             self.log(f"Querying table: {table_name}")
+            arcpy.AddMessage(f"Querying table: {table_name}")
             
             mapping_records = self.execute_sql_query(table_name)
             self.log(f"Retrieved {len(mapping_records)} mapping records")
+            arcpy.AddMessage(f"Retrieved {len(mapping_records)} mapping records")
             
             layers_table = self.app_schema.rstrip('.') + ".INFRATAGGING_LAYERS_VW"
             layer_records = self.execute_sql_query(layers_table)
@@ -152,6 +158,7 @@ class InfraTaggingProcessor:
                     layer_dict[str(layer_id)] = layer
             
             self.log(f"Retrieved {len(layer_dict)} layer records")
+            arcpy.AddMessage(f"Retrieved {len(layer_dict)} layer records")
             
             staging_table = self.app_schema.rstrip('.') + ".INFRA_CONS_STAGINGYR_VW"
             staging_records = self.execute_sql_query(staging_table)
@@ -165,6 +172,7 @@ class InfraTaggingProcessor:
                     staging_dict[key] = stage
             
             self.log(f"Retrieved {len(staging_dict)} staging records")
+            arcpy.AddMessage(f"Retrieved {len(staging_dict)} staging records")
             
             results = []
             seen_keys = set()
@@ -211,6 +219,7 @@ class InfraTaggingProcessor:
                 results.append(result)
             
             self.log(f"Built {len(results)} dependency link records")
+            arcpy.AddMessage(f"Built {len(results)} dependency link records")
             return results
             
         except Exception as e:
@@ -494,12 +503,15 @@ class InfraTaggingProcessor:
         """Process infrastructure tagging summary for given type"""
         try:
             self.log(f"Processing {dependency_type} features...")
+            arcpy.AddMessage(f"Processing {dependency_type} features...")
             
             self.dependency_all = self.get_dependency_links_all(dependency_type)
             self.log(f"Retrieved {len(self.dependency_all)} dependency links")
+            arcpy.AddMessage(f"Retrieved {len(self.dependency_all)} dependency links")
             
             layers = self.get_infra_layers()
             self.log(f"Retrieved {len(layers)} layers")
+            arcpy.AddMessage(f"Retrieved {len(layers)} layers")
             
             # Create lookup by BOTH name AND id for better matching
             layer_dict_by_name = {layer.get('LAYER_NAME'): layer for layer in layers if layer.get('LAYER_NAME')}
@@ -575,6 +587,7 @@ class InfraTaggingProcessor:
                     })
             
             self.log(f"Processed {len(infra_features)} unique {dependency_type} features")
+            arcpy.AddMessage(f"Processed {len(infra_features)} unique {dependency_type} features")
             return infra_features
             
         except Exception as e:
@@ -1086,6 +1099,7 @@ class InfraTaggingProcessor:
 def main():
     """Main function"""
     try:
+        # Print startup info with immediate flush
         print("="*80)
         print("Infrastructure Tagging Summary Generation")
         print("="*80)
@@ -1094,6 +1108,16 @@ def main():
         print(f"Log Folder: {LOG_FOLDER}")
         print("="*80)
         print()
+        sys.stdout.flush()  # Flush immediately
+        
+        # Add to ArcGIS messages
+        arcpy.AddMessage("="*80)
+        arcpy.AddMessage("Infrastructure Tagging Summary Generation")
+        arcpy.AddMessage("="*80)
+        arcpy.AddMessage(f"SDE Path: {SDE_PATH}")
+        arcpy.AddMessage(f"Schema: {APP_SCHEMA}")
+        arcpy.AddMessage(f"Log Folder: {LOG_FOLDER}")
+        arcpy.AddMessage("="*80)
         
         processor = InfraTaggingProcessor()
         status = processor.execute()
