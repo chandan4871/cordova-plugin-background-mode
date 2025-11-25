@@ -64,15 +64,26 @@ class InfraTaggingProcessor:
     
     def _setup_logging(self):
         """Setup logging configuration"""
-        if not os.path.exists(LOG_FOLDER):
-            os.makedirs(LOG_FOLDER)
-        
-        log_file = time.strftime("%Y%m%d") + "_GenerateInfrataggingSummaryIslandWide.log"
-        logging.basicConfig(
-            filename=os.path.join(LOG_FOLDER, log_file),
-            format='%(asctime)s - %(levelname)s - %(message)s',
-            level=getattr(logging, LOG_LEVEL)
-        )
+        try:
+            if not os.path.exists(LOG_FOLDER):
+                os.makedirs(LOG_FOLDER)
+                arcpy.AddMessage(f"Created log folder: {LOG_FOLDER}")
+            
+            log_file = time.strftime("%Y%m%d") + "_GenerateInfrataggingSummaryIslandWide.log"
+            self.log_file_path = os.path.join(LOG_FOLDER, log_file)
+            
+            logging.basicConfig(
+                filename=self.log_file_path,
+                format='%(asctime)s - %(levelname)s - %(message)s',
+                level=getattr(logging, LOG_LEVEL),
+                force=True  # Force reconfiguration if already configured
+            )
+            
+            arcpy.AddMessage(f"Log file: {self.log_file_path}")
+        except Exception as e:
+            arcpy.AddError(f"Error setting up logging: {str(e)}")
+            # Continue even if logging fails
+            self.log_file_path = None
     
     def log(self, message: str, message_type: str = "INFO"):
         """
@@ -1050,29 +1061,52 @@ class InfraTaggingProcessor:
             
             # Final summary
             total_records = len(lst_depending) + len(lst_supporting)
-            self.log("="*80)
-            arcpy.AddMessage("="*80)
             
+            # Create summary message for ArcGIS Server
+            summary_msg = f"""
+{'='*80}
+JOB COMPLETED SUCCESSFULLY!
+{'='*80}
+FINAL SUMMARY:
+  - Depending Features Processed: {len(lst_depending)}
+  - Supporting Features Processed: {len(lst_supporting)}
+  - Total Records Inserted to Cache Table: {total_records}
+{'='*80}
+Log File: {getattr(self, 'log_file_path', 'N/A')}
+{'='*80}
+"""
+            
+            # Log to all outputs
+            self.log("="*80)
             self.log("JOB COMPLETED SUCCESSFULLY!")
-            arcpy.AddMessage("JOB COMPLETED SUCCESSFULLY!")
-            
             self.log("="*80)
-            arcpy.AddMessage("="*80)
-            
             self.log(f"FINAL SUMMARY:")
-            arcpy.AddMessage(f"FINAL SUMMARY:")
-            
             self.log(f"  - Depending Features Processed: {len(lst_depending)}")
-            arcpy.AddMessage(f"  - Depending Features Processed: {len(lst_depending)}")
-            
             self.log(f"  - Supporting Features Processed: {len(lst_supporting)}")
-            arcpy.AddMessage(f"  - Supporting Features Processed: {len(lst_supporting)}")
-            
             self.log(f"  - Total Records Inserted to Cache Table: {total_records}")
-            arcpy.AddMessage(f"  - Total Records Inserted to Cache Table: {total_records}")
-            
             self.log("="*80)
+            self.log(f"Log File: {getattr(self, 'log_file_path', 'N/A')}")
+            self.log("="*80)
+            
+            # Add complete summary as single message for ArcGIS Server
+            arcpy.AddMessage(summary_msg)
+            
+            # Also add individual lines
             arcpy.AddMessage("="*80)
+            arcpy.AddMessage("JOB COMPLETED SUCCESSFULLY!")
+            arcpy.AddMessage("="*80)
+            arcpy.AddMessage(f"FINAL SUMMARY:")
+            arcpy.AddMessage(f"  - Depending Features Processed: {len(lst_depending)}")
+            arcpy.AddMessage(f"  - Supporting Features Processed: {len(lst_supporting)}")
+            arcpy.AddMessage(f"  - Total Records Inserted to Cache Table: {total_records}")
+            arcpy.AddMessage("="*80)
+            
+            # Set output parameter if exists (for GP tools)
+            try:
+                if arcpy.Exists("Output_Message"):
+                    arcpy.SetParameterAsText(0, summary_msg)
+            except:
+                pass
             
             # Print summary to console
             print("\n" + "="*80)
@@ -1083,11 +1117,50 @@ class InfraTaggingProcessor:
             print(f"Total Records Inserted: {total_records}")
             print("="*80)
             
+            # Write summary to a separate file for easy retrieval by Jenkins
+            try:
+                summary_file = os.path.join(LOG_FOLDER, time.strftime("%Y%m%d") + "_Summary.txt")
+                with open(summary_file, 'w') as f:
+                    f.write("="*80 + "\n")
+                    f.write("JOB COMPLETED SUCCESSFULLY!\n")
+                    f.write("="*80 + "\n")
+                    f.write(f"Execution Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write("-"*80 + "\n")
+                    f.write("SUMMARY:\n")
+                    f.write(f"  - Depending Features Processed: {len(lst_depending)}\n")
+                    f.write(f"  - Supporting Features Processed: {len(lst_supporting)}\n")
+                    f.write(f"  - Total Records Inserted: {total_records}\n")
+                    f.write("="*80 + "\n")
+                    f.write(f"Log File: {getattr(self, 'log_file_path', 'N/A')}\n")
+                    f.write("="*80 + "\n")
+                self.log(f"Summary file: {summary_file}")
+                arcpy.AddMessage(f"Summary file: {summary_file}")
+            except Exception as summary_error:
+                arcpy.AddWarning(f"Could not write summary file: {str(summary_error)}")
+            
         except Exception as e:
             arcpy.ResetProgressor()
             self.log(f"ERROR: {str(e)}", "ERROR")
             self.log(traceback.format_exc(), "ERROR")
             status = "Failed"
+            
+            # Write error summary file
+            try:
+                summary_file = os.path.join(LOG_FOLDER, time.strftime("%Y%m%d") + "_Summary.txt")
+                with open(summary_file, 'w') as f:
+                    f.write("="*80 + "\n")
+                    f.write("JOB FAILED!\n")
+                    f.write("="*80 + "\n")
+                    f.write(f"Execution Time: {time.strftime('%Y-%m-%d %H:%M:%S')}\n")
+                    f.write(f"Error: {str(e)}\n")
+                    f.write("-"*80 + "\n")
+                    f.write("Traceback:\n")
+                    f.write(traceback.format_exc() + "\n")
+                    f.write("="*80 + "\n")
+                    f.write(f"Log File: {getattr(self, 'log_file_path', 'N/A')}\n")
+                    f.write("="*80 + "\n")
+            except:
+                pass  # Ignore if summary file write fails
         
         return status
 
