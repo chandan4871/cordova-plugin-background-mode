@@ -117,20 +117,22 @@ const SiteSearchSelect = ({ properties }) => {
                 customBodyRender: (value) => {
                     let color = "default";
 
-                    if (value.toLowerCase() === "none" || value.toLowerCase() === "completed" || value.toLowerCase() === "withdrawn") color = "success";       // green                    
+                    if (value && value.toLowerCase() === "none" || value && value.toLowerCase() === "completed" || value && value.toLowerCase() === "withdrawn") color = "success";       // green                    
                     else if (value === "DRAFT") color = "warning"; // orange
                     else color = "error"; // red
 
                     return (
-                        <Chip
-                            label={value}
-                            color={color}
-                            size="small"
-                            sx={{
-                                fontWeight: 600,
-                                color: color === "default" ? "grey.800" : "white",
-                            }}
-                        />
+                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                            <Chip
+                                label={value || "N/A"}
+                                color={color}
+                                size="small"
+                                sx={{
+                                    fontWeight: 600,
+                                    color: color === "default" ? "grey.800" : "white",
+                                }}
+                            />
+                        </div>
                     );
                 },
             },
