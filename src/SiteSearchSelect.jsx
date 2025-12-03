@@ -124,7 +124,7 @@ const SiteSearchSelect = ({ properties }) => {
                     return (
                         <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                             <Chip
-                                label={value || "N/A"}
+                                label={value}
                                 color={color}
                                 size="small"
                                 sx={{
