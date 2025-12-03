@@ -95,20 +95,8 @@ const SiteSearchSelect = ({ properties }) => {
     }, [properties]);
 
     const columns = [
-        { 
-            name: "propertyId", 
-            label: "Property", 
-            options: { 
-                sort: true
-            } 
-        },
-        { 
-            name: "availability", 
-            label: "Availability", 
-            options: { 
-                sort: true
-            } 
-        },
+        { name: "propertyId", label: "Property", options: { sort: true } },
+        { name: "availability", label: "Availability", options: { sort: true } },
         {
             name: "consultationStatus",
             label: "Consultation Status",
@@ -117,12 +105,12 @@ const SiteSearchSelect = ({ properties }) => {
                 customBodyRender: (value) => {
                     let color = "default";
 
-                    if (value && value.toLowerCase() === "none" || value && value.toLowerCase() === "completed" || value && value.toLowerCase() === "withdrawn") color = "success";       // green                    
+                    if (value.toLowerCase() === "none" || value.toLowerCase() === "completed" || value.toLowerCase() === "withdrawn") color = "success";       // green                    
                     else if (value === "DRAFT") color = "warning"; // orange
                     else color = "error"; // red
 
                     return (
-                        <div style={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center' }}>
                             <Chip
                                 label={value}
                                 color={color}
@@ -137,13 +125,7 @@ const SiteSearchSelect = ({ properties }) => {
                 },
             },
         },
-        { 
-            name: "caseIds", 
-            label: "Case IDs", 
-            options: { 
-                sort: true
-            } 
-        },
+        { name: "caseIds", label: "Case IDs", options: { sort: true } },
     ];
 
     const options = {
@@ -170,10 +152,6 @@ const SiteSearchSelect = ({ properties }) => {
         
         setCellProps: () => ({
             className: 'siteSearchLinks',
-            style: { textAlign: 'center' }
-        }),
-        setCellHeaderProps: () => ({
-            style: { textAlign: 'center' }
         }),
         headerHeight: 0,
         customFooter: () => null,

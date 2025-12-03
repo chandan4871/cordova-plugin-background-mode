@@ -598,31 +598,6 @@
     letter-spacing: 0.00938em;
     font-size: 1rem;
     color: var(--mainColor);
-    text-align: center !important;
-}
-
-/* Force center alignment for all table cells and headers */
-.MuiTableCell-root {
-    text-align: center !important;
-}
-
-.MuiTableCell-head {
-    text-align: center !important;
-}
-
-.MuiTableCell-body {
-    text-align: center !important;
-}
-
-/* Additional specificity for MUIDataTable */
-table tbody tr td,
-table thead tr th {
-    text-align: center !important;
-}
-
-/* Ensure Chip components stay centered */
-.MuiChip-root {
-    margin: 0 auto;
 }
 
 .caseListingStatus {
