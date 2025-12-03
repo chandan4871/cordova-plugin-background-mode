@@ -99,18 +99,14 @@ const SiteSearchSelect = ({ properties }) => {
             name: "propertyId", 
             label: "Property", 
             options: { 
-                sort: true,
-                setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
-                setCellProps: () => ({ style: { textAlign: 'center' } })
+                sort: true
             } 
         },
         { 
             name: "availability", 
             label: "Availability", 
             options: { 
-                sort: true,
-                setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
-                setCellProps: () => ({ style: { textAlign: 'center' } })
+                sort: true
             } 
         },
         {
@@ -118,8 +114,6 @@ const SiteSearchSelect = ({ properties }) => {
             label: "Consultation Status",
             options: {
                 sort: true,
-                setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
-                setCellProps: () => ({ style: { textAlign: 'center' } }),
                 customBodyRender: (value) => {
                     let color = "default";
 
@@ -147,9 +141,7 @@ const SiteSearchSelect = ({ properties }) => {
             name: "caseIds", 
             label: "Case IDs", 
             options: { 
-                sort: true,
-                setCellHeaderProps: () => ({ style: { textAlign: 'center' } }),
-                setCellProps: () => ({ style: { textAlign: 'center' } })
+                sort: true
             } 
         },
     ];
@@ -178,6 +170,10 @@ const SiteSearchSelect = ({ properties }) => {
         
         setCellProps: () => ({
             className: 'siteSearchLinks',
+            style: { textAlign: 'center' }
+        }),
+        setCellHeaderProps: () => ({
+            style: { textAlign: 'center' }
         }),
         headerHeight: 0,
         customFooter: () => null,
