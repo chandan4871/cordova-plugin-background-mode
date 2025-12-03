@@ -231,22 +231,19 @@ const SiteSearchSelect = ({ properties }) => {
             }
         });
     
-        // Adjust the zoom behavior:
-        if (selectedData.length === 1) {
-            // If only one graphic is selected, zoom to that single graphic using mapViewZoomToTarget
-            mapViewZoomToTarget(mapView, mapGraphics[0].geometry); // Zoom to the single geometry
-        } else {
-            // If multiple graphics are selected, zoom to the combined extent using mapViewZoomToTarget
-            mapViewZoomToTarget(mapView, extent); // Zoom to the combined extent
+        // Expand the extent to add padding around the selected properties
+        // Higher number = more zoomed out (more padding)
+        // Lower number = more zoomed in (less padding)
+        if (extent) {
+            const expandFactor = 1.5; // Adjust this value: 1.5 means 50% more area, 2.0 means 100% more area
+            const expandedExtent = extent.expand(expandFactor);
+            
+            mapView.goTo(expandedExtent, {
+                duration: 1000 // Animation duration in milliseconds
+            }).catch((err) => {
+                console.error("Zoom Error: ", err.message);
+            });
         }
-    
-        // Adjust the zoom level further (use this after `goTo` to adjust the zoom)
-        const zoomLevel = 9; // Adjust this number for more zoomed-in or zoomed-out
-        mapView.goTo(extent, {
-            zoom: zoomLevel, // Set the zoom level
-        }).catch((err) => {
-            console.error("Zoom Error: ", err.message);
-        });
     };
     
 
