@@ -95,7 +95,23 @@ const SiteSearchSelect = ({ properties }) => {
     }, [properties]);
 
     const columns = [
-        { name: "propertyId", label: "Property", options: { sort: true } },
+        { 
+            name: "propertyId", 
+            label: "Property", 
+            options: { 
+                sort: true,
+                customBodyRender: (value, tableMeta) => {
+                    return (
+                        <span 
+                            onClick={() => onRowPropertyClick(tableMeta.rowData)}
+                            style={{ cursor: 'pointer', color: 'var(--mainColor)', textDecoration: 'none' }}
+                        >
+                            {value}
+                        </span>
+                    );
+                }
+            } 
+        },
         { name: "availability", label: "Availability", options: { sort: true } },
         {
             name: "consultationStatus",
@@ -136,19 +152,6 @@ const SiteSearchSelect = ({ properties }) => {
         viewColumns: false,
         rowsPerPage: 100,
         rowsSelected: selectedRows,
-        onRowClick: (rowData, rowMeta) => {
-            onRowPropertyClick(rowData);
-        },
-        // setRowProps: (row) => {
-        //     const consultationStatus = row[3]?.toLowerCase(); // Safe conversion to string
-        //     const isOngoingOrDraft = !(consultationStatus === "none" || consultationStatus === "completed" || consultationStatus === "withdrawn")
-        //     return {
-        //         style: {
-        //             cursor: isOngoingOrDraft ? "not-allowed" : "pointer",
-        //             opacity: isOngoingOrDraft ? 0.5 : 1, // visual hint
-        //         },
-        //     };
-        // },
         
         setCellProps: () => ({
             className: 'siteSearchLinks',
@@ -445,7 +448,7 @@ const SiteSearchSelect = ({ properties }) => {
                                     ...options,
                                     responsive: "simple",
                                     tableBodyMaxHeight: "none",
-                                    setTableProps: () => ({ style: { overflowX: "hidden", cursor : "pointer" } }),
+                                    setTableProps: () => ({ style: { overflowX: "hidden" } }),
                                 }}
                             />
                         </Box>
