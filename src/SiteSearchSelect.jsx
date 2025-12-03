@@ -122,17 +122,15 @@ const SiteSearchSelect = ({ properties }) => {
                     else color = "error"; // red
 
                     return (
-                        <div style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Chip
-                                label={value}
-                                color={color}
-                                size="small"
-                                sx={{
-                                    fontWeight: 600,
-                                    color: color === "default" ? "grey.800" : "white",
-                                }}
-                            />
-                        </div>
+                        <Chip
+                            label={value}
+                            color={color}
+                            size="small"
+                            sx={{
+                                fontWeight: 600,
+                                color: color === "default" ? "grey.800" : "white",
+                            }}
+                        />
                     );
                 },
             },
