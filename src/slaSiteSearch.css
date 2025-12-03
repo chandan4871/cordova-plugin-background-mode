@@ -1,0 +1,728 @@
+.firstHalfDiv{
+    width: 100%;
+    height: calc(-145px + 100vh);
+    overflow-y: scroll;
+}
+
+
+.panelCards:has(.firstHalfDiv){
+    overflow: hidden!important;
+}
+
+.otherLabel{
+    left: -10px;
+    width: auto;
+}
+
+.SLAListCheckbox .MuiListItemIcon-root {
+    min-width: 33px!important;
+}
+
+.SLAListCheckbox .MuiTypography-body2{
+    font-size: 16px!important;
+}
+
+.dateFilterSLA .MuiInput-underline.Mui-focused:after{
+    transform: none !important;
+}
+
+.dateFilterSection{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.tenureAllowanceSection{
+    display: inline-flex;
+    justify-content: center;
+    vertical-align: middle;
+    align-items: center;
+}
+
+.tenureAllowanceSection .dateFilterSLA{
+    margin-bottom: 0px!important;
+}
+
+.pd-lr16{
+    padding: 0 1rem!important;
+}
+
+.pd-16{
+    padding: 1rem!important;
+}
+
+.rightPanelMainDiv .MuiAccordion-root .MuiAccordionDetails-root{
+    height: auto!important;
+    max-height: none!important;
+}
+
+.formFieldContainer{
+        margin-bottom: .5rem;
+    }
+
+  .formFieldContainer .fieldLabel{
+      padding-bottom: .25rem;
+      font-weight: bold;
+  }
+.dateFilterSLA{
+    padding-bottom: .25rem!important;
+}
+.dateFilterSLA:last-child{
+    margin-bottom: 1rem;
+}
+  .dateFilterSLA .MuiBox-root{
+    border: 1px solid #95A0B2;
+    border-radius: 5px;
+    padding: .5rem;
+  }
+
+ 
+  .caseIDLabel{
+      font-weight: bold;
+  }
+
+  .caseIdVal{
+      color: #FAFBFC;
+  }
+  .caseStatusVal{
+      color: #dea469!important;
+  }
+  .createdDateVal{
+      color: #777777;
+  }
+  .actnBtn .MuiButton-contained{
+    width: 100%!important;
+  }
+    .routingManagerBtn {
+    background-color: #4787ed!important;
+    color: #fff !important;
+  } 
+
+  .siteSearchPrimaryCheckbox {
+      color: #4787ed !important;
+    fill: transparent;
+    stroke: #808080; /* This sets the border color to grey */
+    stroke-width: 0.2;
+  }
+  .siteSearchPrimaryCheckbox:disabled {
+    color: #cccccc !important; /* Light grey for disabled state */
+    fill: #cccccc;
+    stroke: #cccccc;
+}
+
+   .sensitiveUseCheckbox {
+      color: #4787ed!important;
+  }
+  .submitBtn{
+      padding-top: 0px!important;
+  }
+  .pt-0{
+      padding-top: 0px!important;
+  }
+  .errorToast .MuiAlert-standardError{
+    border: 1px solid #f44336;
+  }
+ 
+  .consulationSSLASelect{
+      width: 50%;
+  }
+  .consulationSSLASelect .stepperConsultationInsertsCard .MuiContainer-root{
+          min-height: calc(100vh - 274px);
+          height: auto;
+  }
+
+  .secondHalfDiv {
+    width: 100%;
+    height: calc(-145px + 100vh); 
+    overflow-y: scroll;
+  }
+
+   .secondHalfDiv .commentContainer {
+    min-height: calc(100vh - 555px);
+  }
+
+  .secondHalfDiv .commentContainerNoAction {
+    min-height: calc(100vh - 250px);
+  }
+
+  .secondHalfDiv .commentBackground {
+    background-color: #f7f7f7;
+  }
+
+  .secondHalfDiv .actionsContainer {
+    flex-direction: column;
+  }
+
+  .secondHalfDiv .actionsContainer .formRow {
+    width: 100%;
+  }
+  .secondHalfDiv .actionsContainer .formRow .formElement {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .commentCard{
+      box-shadow: 0 0 10px 0 rgb(0, 0, 0, 0.2)!important;
+      margin-bottom: 8px;
+  }
+
+  .comment-card-width{
+    width: 100%;
+  }
+
+  .commentCard .MuiCardHeader-avatar img {
+    height: 40px;
+    width: 40px;
+  }
+
+  .commentConatiner{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+        align-items: center;
+  } 
+ .commentConatiner .MuiChip-sizeSmall{
+    font-size: 16px;  
+    height: 40px;
+    padding: 1rem;
+  }
+  .SiteDetailsClass .MuiTableCell-head{
+    background-color: transparent!important;
+  }
+  .PrimaryUseComp .MuiAccordionSummary-content{
+      color: #0000008c!important;
+  }
+ .PrimaryUseComp .MuiTableCell-body, 
+ .PrimaryUseComp .MuiTableCell-head , 
+ .SecondayUseComp .MuiTableCell-body, 
+ .SecondayUseComp .MuiTableCell-head,
+ .TenureAllowable .MuiTableCell-body, 
+ .TenureAllowable .MuiTableCell-head, 
+ .ChampionAgency .MuiTableCell-body, 
+ .ChampionAgency .MuiTableCell-head,
+ .Remarks .MuiTableCell-body, 
+ .Remarks .MuiTableCell-head,
+ .Consultation .MuiTableCell-body, 
+ .Consultation .MuiTableCell-head,
+ .SiteFieldsEditor .MuiTableCell-body, 
+ .SiteFieldsEditor .MuiTableCell-head {
+     border: 0px!important;
+     background-color: transparent!important;
+     font-size: 1rem!important;
+ }
+  .PrimaryUseComp .MuiAccordionSummary-content, 
+  .SecondayUseComp .MuiAccordionSummary-content,
+  .TenureAllowable .MuiAccordionSummary-content, 
+  .ChampionAgency .MuiAccordionSummary-content,
+  .Remarks .MuiAccordionSummary-content,
+  .Consultation .MuiAccordionSummary-content,
+  .SiteFieldsEditor .MuiAccordionSummary-content{
+    color: #0000008c;
+ }
+ .caseStyle .MuiAccordion-root .MuiAccordionSummary-content .MuiTypography-root{
+    color: rgba(0, 0, 0, 0.87) !important;
+    letter-spacing: 0rem!important;
+    font-size: 18px!important;
+    line-height: 1.334!important;
+}
+
+ .SiteFieldsEditor tbody tr.MuiTableRow-root:nth-of-type(even),.SiteFieldsEditor thead tr.MuiTableRow-root{
+     background-color: #f1f3f7;
+ }
+ .SiteFieldsEditor tbody tr td.MuiTableCell-root.MuiTableCell-body:last-child{
+    text-align: right;
+}
+.SiteFieldsEditor thead tr th:last-child{
+    text-align: right;
+}
+.SiteFieldsEditor thead tr th, .SiteFieldsEditor tbody tr td{ 
+ color: #344054!important;
+}
+.rightPanelMainDiv .ps__thumb-y{
+    min-width: 8px !important;
+}
+.SiteFieldsEditor
+.GDCP .MuiTableCell-body, 
+.GDCP .MuiTableCell-head{
+    color: #ee0202!important;
+}
+
+.RedFieldsEditor
+.GDCP .MuiTableCell-body, 
+.GDCP .MuiTableCell-head{
+    color: #ee0202;
+}
+.AgencyData{
+        display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    color: #000;
+}
+.SiteDetailsClass{
+    display: flex;
+}
+.consultBtn{
+    width: 100%;;
+}
+.caseFormActions {
+    gap: 25px;
+    flex-wrap: nowrap!important;
+}
+.siteId button{
+        border: 0;
+    background: transparent;
+    font-weight: 600;
+}
+
+.siteTableHead th{
+        color: #344054!important;
+    background-color: #f1f3f7;
+}
+.Siteheader{
+        font-weight: 600;
+    font-size: 24px;
+    color: #344054;
+}
+.pb-0{
+    padding-bottom: 0px!important;
+}
+.backLink{
+    align-items: center;
+    display: flex;
+    gap: 10px;
+    cursor: pointer;
+}
+.backLink svg{
+    transform: rotate(180deg);
+    font-size: 1rem;
+}
+.btnNotClickable{
+    cursor: default!important;
+}
+.SLACheckboxLabel{
+    flex: 1 1 100%!important;
+}
+#outlined-adornment-sqm{
+    padding: .75rem!important;
+
+}
+.displayNone{
+    display: none!important;
+}
+.firstHalfDiv .MuiStepper-horizontal{
+    max-width: 100%;
+    overflow: hidden;
+    padding: 16px 8px !important;
+    justify-content: center;
+}
+.firstHalfDiv .MuiStep-horizontal .MuiTypography-body2{
+    flex: 0 0 14%!important;
+    max-width: 100%;
+    word-break: break-all;
+    white-space: break-spaces;
+}
+.firstHalfDiv .MuiStep-horizontal .MuiTypography-body2{
+    font-size: 1rem!important;
+    letter-spacing: 0!important;
+}
+.editbtn{
+    display: flex;
+    vertical-align: middle;
+    align-items: center;
+    margin-right: 1rem;
+}
+.stepperCircles .MuiStepIcon-root.MuiStepIcon-active{
+        color: #4787ed!important;
+        opacity: 80%;
+}
+
+.firstHalfDiv .Mui-completed {
+    color: #35ac46 !important;
+}
+.nestedStepper{
+ padding: .5rem!important;
+}
+
+.consultBtnAccordion{
+    text-align: center;
+}
+
+.consultBtn{
+    display: flex;
+    margin-right: 0px;
+    width: 90%;
+    font-size: large!important;
+    justify-content: space-between!important;
+}
+.siteStepper .MuiStep-horizontal{
+    flex: 0 0 30% !important;
+}
+.decisionLabel{
+    margin-right: 1rem;
+}
+
+.commentCardTitle{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.addSiteSection td{
+    border-bottom: 0px!important;
+}
+.tenureDatePicker .MuiInputBase-adornedEnd{
+        height: 37px;
+    padding: .5rem;
+}
+.tenureSection:last-child td{
+    border-bottom: 0px;
+}
+.tenureDatePicker .MuiInputBase-adornedEnd::before{
+    border: 1px solid #eeee!important;
+    border-color: rgba(0, 0, 0, 0.26)!important;
+    height: 37px;
+    padding: .5rem;
+    border-radius: 4px;
+}
+
+.consultBtn svg{
+    font-size: 1rem!important;
+}
+
+.redText{
+    color: #dc3545!important;
+}
+.siteAreaBox{
+    height: 37px!important;
+}
+.SiteDataBlueTableHeader  th{
+    font-size: 14px!important;
+}
+.useComparisionList{
+    list-style: none!important;
+    display: flex;
+   height: 115px;
+    flex-direction: column;
+   
+}
+.sqmValue{
+     font-size: 16px;
+    margin-bottom: .5rem;
+    color: #28a745;
+    font-weight: 500;
+    line-height: 1.3em;
+    max-height: 4em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.usesCompTableTd{
+    /* display: flex!important; */
+    width: 30%;
+        background: #f3f3f3!important;
+        border-bottom: 0px!important;
+}
+.sqmInput{
+    width: 50%;
+}
+.formControlUses .MuiFormControlLabel-label.Mui-disabled, .formControlUses .MuiCheckbox-colorSecondary.Mui-disabled{
+    color: #6e6e6e;
+}
+
+.uraAssesmentCol{
+    background: #ffffff!important;
+}
+.siteUsesComparisonTable th{
+    font-size: 16px!important;
+}   
+.usesCompTableTd:not(:first-child) .formControlUses{
+    display: flex;
+    align-items: center;
+}
+.comparisionTableHeader th{
+    color: #4787ed!important;
+}
+.othersCheckbox{
+    flex: 1 1 35% ! Important;
+}
+.firstHalfDiv .MuiInputBase-root.Mui-disabled{
+    background: #00000014 !important;
+        color: #6e6e6e !important;
+}
+.otherTextDesc{
+    line-height: 1.3em;
+    max-height: 3em;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.useCompOthers{
+    margin-top: .2rem;
+}
+.routingManagerTable td{
+    border-bottom: 0px!important;
+}
+
+.underlined-cell {
+  position: relative;
+  width: 100%;
+}
+
+.cell-content {
+  text-align: center;
+  padding: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.underlined-cell::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background-color: rgba(224, 224, 224, 1); 
+  width: 100%;
+}
+
+.fixed-text-field .MuiOutlinedInput-input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.imgContainer{
+    overflow: unset;
+}
+
+.imgContainer {
+    position: relative;
+}
+
+.imgContainer img {
+    width: auto !important;
+    height: 100% !important;
+    cursor: pointer;
+}
+
+.imgContainer {
+    width: 100% !important;
+    height: 150px !important;
+}
+
+.imgContainer svg {
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    color: blue;
+    opacity: 0.5;
+    cursor: pointer;            
+} 
+
+.checkCheckedboxDisableColor {
+    fill : grey !important;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip {
+    color: var(--whiteColor);
+    margin: 20px auto;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip .MuiChip-label {
+    padding: 0px 5px;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip.Supported {
+    background-color: #58c558;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip.NotSupported {
+    background-color: #f41e1edb;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip.SupportedWithConditions {
+    background-color: #ffa500bf;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardHeader .statusChip.RequestMoreInfo {
+    background-color: grey;
+}
+
+.stepperAttributesDiv .attributesCard .summaryCardActions .attachmentchip span {
+    white-space: normal;
+}
+
+.notSupportChip{
+    background-color: #f41e1edb!important;
+    color: #ffffff !important;
+}
+
+.supportedChip{
+ background-color: #58c558 !important;
+ color: #ffffff !important;
+
+}
+
+.supportedCondChip{
+ background-color: #ffa500bf !important;
+    color: #ffffff !important;
+}
+
+.assessmentChip{
+ background-color: #DD7798 !important;
+    color: #ffffff !important;
+}
+
+.nextAssessmentChip{
+ background-color: #0000FF !important;
+    color: #ffffff !important;
+}
+
+.caseId{
+    font-size: 1.4rem !important;
+}
+
+.siteSearchAccordionTitle .MuiCardHeader-title {
+    font-size: 18px !important;
+}
+
+.siteSearchLinks {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+    font-size: 1rem;
+    color: var(--mainColor);
+}
+
+.caseListingStatus {
+    font-size: 0.875rem;
+    font-weight: 500;
+    line-height: 1.5;
+    color: #FF8C00;
+}
+
+.siteSearchNormalText {
+    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+    font-weight: 400;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+    font-size: 1rem;
+}
+
+.deleteButton {
+    background-color: #f41e1e !important;
+    opacity: 0.86;
+    color: white !important;
+  }
+
+.caseListTable
+{
+    width: 100% !important;
+}
+.noHoverEffect:hover {
+    background-color: transparent !important;
+}
+.filter-toolbar {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background-color: #fafafa;
+    border: 1px solid #e0e0e0;
+}
+
+    /* Label */
+    .filter-toolbar .filter-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #333;
+}
+
+/* Dropdowns */
+.filter-toolbar .filter-control {
+    min-width: 120px;
+}
+
+/* Buttons group */
+.filter-toolbar .filter-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.filter-toolbar .filter-buttons button {
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 100%;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .filter-toolbar {
+        grid-template-columns: auto 1fr 1fr;
+        grid-template-areas:
+            "label col val"
+            ". btn btn";
+    }
+    .filter-toolbar .filter-label {
+        grid-area: label;
+    }
+
+    .filter-toolbar .filter-control:nth-child(2) {
+        grid-area: col;
+    }
+
+    .filter-toolbar .filter-control:nth-child(3) {
+        grid-area: val;
+    }
+
+    .filter-toolbar .filter-buttons {
+        grid-area: btn;
+        justify-content: flex-end;
+    }
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+.filter-toolbar {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+        "label"
+        "col"
+        "val"
+        "btn";
+    gap: 10px;
+    padding: 10px;
+}
+
+    .filter-toolbar .filter-buttons {
+        justify-content: stretch;
+    }
+
+        .filter-toolbar .filter-buttons button {
+            flex: 1;
+        }
+}
+/* Hide internal horizontal scrollbars from MUIDataTable */
+/* .MuiTableContainer-root {
+    overflow-x: hidden !important;
+} */
+
+/* Let outer tab or parent container handle scrolling */
+/* .MuiPaper-root {
+    overflow: visible !important;
+} */
