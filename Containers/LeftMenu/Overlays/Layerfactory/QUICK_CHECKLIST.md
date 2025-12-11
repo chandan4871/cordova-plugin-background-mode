@@ -87,15 +87,22 @@
 
 ## 📝 Quick Reference
 
-### Files to Edit (Priority Order) - All at Root Level!:
-1. `ajax.js` - Line 8
-2. `util.js` - Line 7
-3. `layer.js` - Line 10
-4. `urlconstants.js` - Line 6
-5. `aggregationconstants.js` - Line 7
+### Files to Edit (Priority Order) - All at Root Level!
+
+**Row 1 (Helper Files):** `ajax.js` • `util.js` • `layer.js` • `configvalidator.ts`  
+**Row 2 (Constants):** `urlconstants.js` • `aggregationconstants.js` • `chartconstants.js`  
+**Row 3 (Config):** `onetool.js`  
+**Row 4 (Entity Layers):** `mp19landuselayer.js` • `parkscorelayer.js` • `salessitelayer.js` • `rentalofstatelandlayer.js` • `retaildensitylayer.js`
+
+#### What to Edit:
+1. `ajax.js` - Line ~8 (fix import)
+2. `util.js` - Line ~7 (fix import)
+3. `layer.js` - Line ~10 (fix import)
+4. `urlconstants.js` - Line ~6 (fix import)
+5. `aggregationconstants.js` - Line ~7 (fix import)
 6. `onetool.js` - Replace entire OneToolMapData array
 
-**Everything is in one folder - super easy to find!** 🎉
+**Everything is in one folder - organized in rows - super easy to find!** 🎉
 
 ### Where to Find Your Files:
 ```

@@ -1,38 +1,48 @@
 # LayerFactory Integration
 
+> 📋 **Quick Navigation:** See **[INDEX.md](./INDEX.md)** or **[FILE_LAYOUT.md](./FILE_LAYOUT.md)** for visual horizontal file layout!
+
 This directory contains the integrated LayerFactory code that was previously loaded from the external ePlanner application.
 
 ## ✅ Completed Files (Flat Structure - Easy to Find!)
 
-```
-Containers/LeftMenu/Overlays/Layerfactory/
-├── layerfactory.js                 # ✅ Main LayerFactory class
-├── WebApi.ts                       # ✅ Web API utilities
-├── onetool.js                      # ✅ Map data configuration (customize with your layers)
-├── export-css.css                  # ✅ Styles for components
-│
-├── util.js                         # ✅ Utility functions (needs integration)
-├── layer.js                        # ✅ Base Layer class (needs integration)
-├── configvalidator.ts              # ✅ Config validation
-├── ajax.js                         # ✅ Ajax wrapper (needs integration)
-│
-├── urlconstants.js                 # ✅ URL constants (update with your URLs)
-├── aggregationconstants.js         # ✅ Aggregation constants (update with your data)
-├── chartconstants.js               # ✅ Chart colors
-│
-├── mp19landuselayer.js             # ✅ MP19 Land Use Layer (fully implemented)
-├── parkscorelayer.js               # ✅ Placeholder stub
-├── salessitelayer.js               # ✅ Placeholder stub
-├── rentalofstatelandlayer.js       # ✅ Placeholder stub
-├── retaildensitylayer.js           # ✅ Placeholder stub
-│
-├── README.md                       # 📖 This file
-├── SETUP_GUIDE.md                  # 📖 Detailed setup instructions
-├── INTEGRATION_SUMMARY.md          # 📖 What was completed
-└── QUICK_CHECKLIST.md              # 📖 Task checklist
-```
+### 📂 Files Arranged by Category (All in One Folder!)
 
-**All files are now at the same level - no nested folders! Easy to find! 🎉**
+#### 🎯 **Core Files** (Row 1)
+`layerfactory.js` | `WebApi.ts` | `onetool.js` | `export-css.css`
+
+#### 🔧 **Helper Files** (Row 2)  
+`ajax.js` | `util.js` | `layer.js` | `configvalidator.ts`
+
+#### 📊 **Constants** (Row 3)
+`urlconstants.js` | `aggregationconstants.js` | `chartconstants.js`
+
+#### 🗺️ **Entity Layers** (Row 4)
+`mp19landuselayer.js` | `parkscorelayer.js` | `salessitelayer.js` | `rentalofstatelandlayer.js` | `retaildensitylayer.js`
+
+#### 📖 **Documentation** (Row 5)
+`README.md` | `SETUP_GUIDE.md` | `QUICK_CHECKLIST.md` | `INTEGRATION_SUMMARY.md` | `FILES_AT_A_GLANCE.md`
+
+---
+
+### 📋 Quick Status Table
+
+| **Core Files** | **Status** | **Helper Files** | **Status** | **Constants** | **Status** |
+|----------------|------------|------------------|------------|---------------|------------|
+| layerfactory.js | ✅ Done | ajax.js | 🔧 Update | urlconstants.js | 🔧 Update |
+| WebApi.ts | ✅ Done | util.js | 🔧 Update | aggregationconstants.js | 🔧 Update |
+| onetool.js | 🔧 Update | layer.js | 🔧 Update | chartconstants.js | ✅ Done |
+| export-css.css | ✅ Done | configvalidator.ts | ✅ Done | | |
+
+| **Entity Layers** | **Status** |
+|-------------------|------------|
+| mp19landuselayer.js | ✅ Fully Implemented |
+| parkscorelayer.js | 📝 Stub - Needs Implementation |
+| salessitelayer.js | 📝 Stub - Needs Implementation |
+| rentalofstatelandlayer.js | 📝 Stub - Needs Implementation |
+| retaildensitylayer.js | 📝 Stub - Needs Implementation |
+
+**All 20 files are at the same level - no nested folders! Easy to find! 🎉**
 
 ## Integration
 

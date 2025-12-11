@@ -1,40 +1,36 @@
 # LayerFactory Files - Quick Reference
 
-## 📁 ALL FILES ARE AT ONE LEVEL - EASY TO FIND!
+## 📁 ALL FILES ARE AT ONE LEVEL - LAID OUT IN ROWS!
+
+### Files Arranged Horizontally by Category:
 
 ```
-Layerfactory/
-│
-├── 🎯 Core Files
-│   ├── layerfactory.js         ← Main factory class (exposes window.LayerFactory)
-│   ├── WebApi.ts               ← ArcGIS API wrapper
-│   ├── onetool.js              ← Layer configuration (ADD YOUR LAYERS HERE!)
-│   └── export-css.css          ← Styles
-│
-├── 🔧 Helper Files (Update these with your app's imports)
-│   ├── ajax.js                 ← Ajax wrapper (point to your Ajax utility)
-│   ├── util.js                 ← Utility functions (point to your helpers)
-│   ├── layer.js                ← Base Layer class (point to your Layer)
-│   └── configvalidator.ts      ← Config validation (already implemented)
-│
-├── 📊 Constants (Update with your data)
-│   ├── urlconstants.js         ← ArcGIS server URLs
-│   ├── aggregationconstants.js ← Planning areas, land use types
-│   └── chartconstants.js       ← Chart colors
-│
-├── 🗺️ Layer Implementations
-│   ├── mp19landuselayer.js     ← ✅ FULLY IMPLEMENTED (use as template)
-│   ├── parkscorelayer.js       ← Stub to implement
-│   ├── salessitelayer.js       ← Stub to implement
-│   ├── rentalofstatelandlayer.js ← Stub to implement
-│   └── retaildensitylayer.js   ← Stub to implement
-│
-└── 📖 Documentation
-    ├── README.md               ← Overview & API reference
-    ├── SETUP_GUIDE.md          ← Step-by-step instructions
-    ├── QUICK_CHECKLIST.md      ← Task checklist
-    ├── INTEGRATION_SUMMARY.md  ← What was done
-    └── FILES_AT_A_GLANCE.md    ← This file!
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🎯 CORE FILES (Row 1)                                                      │
+│ layerfactory.js  |  WebApi.ts  |  onetool.js  |  export-css.css           │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🔧 HELPER FILES (Row 2) - Update these with your imports!                 │
+│ ajax.js  |  util.js  |  layer.js  |  configvalidator.ts                   │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📊 CONSTANTS (Row 3) - Update with your data!                             │
+│ urlconstants.js  |  aggregationconstants.js  |  chartconstants.js         │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 🗺️ ENTITY LAYERS (Row 4)                                                  │
+│ mp19landuselayer.js  |  parkscorelayer.js  |  salessitelayer.js  |        │
+│ rentalofstatelandlayer.js  |  retaildensitylayer.js                       │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ 📖 DOCUMENTATION (Row 5)                                                   │
+│ README.md  |  SETUP_GUIDE.md  |  QUICK_CHECKLIST.md  |                    │
+│ INTEGRATION_SUMMARY.md  |  FILES_AT_A_GLANCE.md                           │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ## 🚀 Quick Start (3 Steps)
@@ -57,26 +53,34 @@ npm start
 ```
 Check browser console for errors, then navigate to Overlays menu!
 
-## 📝 File Descriptions
+## 📝 File Status - Quick View
 
-| File | Status | What You Need To Do |
-|------|--------|---------------------|
-| `layerfactory.js` | ✅ Done | Nothing - it's ready! |
-| `WebApi.ts` | ✅ Done | Nothing - it's ready! |
-| `onetool.js` | 🔧 Update | Add your layer configurations |
-| `ajax.js` | 🔧 Update | Update import path to your Ajax |
-| `util.js` | 🔧 Update | Update import path to your utilities |
-| `layer.js` | 🔧 Update | Update import path to your Layer class |
-| `urlconstants.js` | 🔧 Update | Update import path to your constants |
-| `aggregationconstants.js` | 🔧 Update | Update import path to your constants |
-| `chartconstants.js` | ✅ Done | Nothing - colors are ready! |
-| `configvalidator.ts` | ✅ Done | Nothing - it's ready! |
-| `export-css.css` | ✅ Done | Nothing - styles are ready! |
-| `mp19landuselayer.js` | ✅ Done | Use as template for other layers! |
-| `parkscorelayer.js` | 📝 Implement | Copy from mp19landuselayer.js template |
-| `salessitelayer.js` | 📝 Implement | Copy from mp19landuselayer.js template |
-| `rentalofstatelandlayer.js` | 📝 Implement | Copy from mp19landuselayer.js template |
-| `retaildensitylayer.js` | 📝 Implement | Copy from mp19landuselayer.js template |
+### ✅ Ready to Use (No Action Needed)
+`layerfactory.js` • `WebApi.ts` • `export-css.css` • `chartconstants.js` • `configvalidator.ts` • `mp19landuselayer.js`
+
+### 🔧 Update Import Paths (Priority!)
+`ajax.js` • `util.js` • `layer.js` • `urlconstants.js` • `aggregationconstants.js`
+
+### 📝 Customize/Configure
+`onetool.js` (add your layers)
+
+### 📝 Implement Later (Optional)
+`parkscorelayer.js` • `salessitelayer.js` • `rentalofstatelandlayer.js` • `retaildensitylayer.js`
+
+---
+
+## 🎯 Action Items by File (Horizontal View)
+
+| **Core** | **Action** | **Helper** | **Action** | **Constant** | **Action** |
+|----------|------------|------------|------------|--------------|------------|
+| layerfactory.js | ✅ Ready | ajax.js | 🔧 Fix import | urlconstants.js | 🔧 Fix import |
+| WebApi.ts | ✅ Ready | util.js | 🔧 Fix import | aggregationconstants.js | 🔧 Fix import |
+| onetool.js | 🔧 Add layers | layer.js | 🔧 Fix import | chartconstants.js | ✅ Ready |
+| export-css.css | ✅ Ready | configvalidator.ts | ✅ Ready | | |
+
+| **Entity Layers** | **mp19** | **parks** | **sales** | **rental** | **retail** |
+|-------------------|----------|-----------|-----------|------------|------------|
+| **Action** | ✅ Done | 📝 Implement | 📝 Implement | 📝 Implement | 📝 Implement |
 
 ## 🎯 Priority Order
 
