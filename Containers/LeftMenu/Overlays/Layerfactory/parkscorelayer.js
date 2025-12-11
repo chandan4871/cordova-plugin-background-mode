@@ -1,11 +1,11 @@
 /**
- * Sales Site Layer
+ * Parks Core Layer
  * TODO: Implement this layer based on your requirements
  */
 
-import Layer from '../functions/layer';
+import Layer from './layer';
 
-export default class SalesSiteLayer extends Layer {
+export default class ParksCoreLayer extends Layer {
     constructor(opts, token) {
         super(opts, token);
     }

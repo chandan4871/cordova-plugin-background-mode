@@ -6,23 +6,23 @@
 
 - [ ] **Step 1**: Find your actual `Ajax` utility file location
   - Look in: `src/Utils/`, `src/wrapper/`, or similar
-  - Update `wrapper/ajax.js` line 3 with correct import path
+  - Update `ajax.js` line 3 with correct import path
 
 - [ ] **Step 2**: Find your actual utility functions file
   - Look in: `src/Utils/helpers.js`, `src/functions/util.js`, or similar
-  - Update `functions/util.js` with correct import path
+  - Update `util.js` with correct import path
 
 - [ ] **Step 3**: Find your actual Layer base class
   - Look for your Layer.js file (you provided the code earlier)
-  - Update `functions/layer.js` with correct import path or copy the class
+  - Update `layer.js` with correct import path or copy the class
 
 - [ ] **Step 4**: Find your URL constants file
   - Look in: `src/Constants/urlconstants.js` or similar
-  - Update `constants/urlconstants.js` with correct import path
+  - Update `urlconstants.js` with correct import path
 
 - [ ] **Step 5**: Find your aggregation constants file
   - Look in: `src/Constants/aggregationconstants.js` or similar
-  - Update `constants/aggregationconstants.js` with correct import path
+  - Update `aggregationconstants.js` with correct import path
 
 ### Phase 2: Configure Data
 
@@ -46,16 +46,16 @@
 
 ### Phase 4: Implement Entity Layers (Optional but recommended)
 
-- [ ] **Step 9**: Implement `entities/parkscorelayer.js`
+- [ ] **Step 9**: Implement `parkscorelayer.js`
   - Use `mp19landuselayer.js` as template
 
-- [ ] **Step 10**: Implement `entities/salessitelayer.js`
+- [ ] **Step 10**: Implement `salessitelayer.js`
   - Use `mp19landuselayer.js` as template
 
-- [ ] **Step 11**: Implement `entities/rentalofstatelandlayer.js`
+- [ ] **Step 11**: Implement `rentalofstatelandlayer.js`
   - Use `mp19landuselayer.js` as template
 
-- [ ] **Step 12**: Implement `entities/retaildensitylayer.js`
+- [ ] **Step 12**: Implement `retaildensitylayer.js`
   - Use `mp19landuselayer.js` as template
 
 ### Phase 5: Cleanup
@@ -87,13 +87,15 @@
 
 ## 📝 Quick Reference
 
-### Files to Edit (Priority Order):
-1. `wrapper/ajax.js` - Line 8
-2. `functions/util.js` - Line 7
-3. `functions/layer.js` - Line 10
-4. `constants/urlconstants.js` - Line 6
-5. `constants/aggregationconstants.js` - Line 7
+### Files to Edit (Priority Order) - All at Root Level!:
+1. `ajax.js` - Line 8
+2. `util.js` - Line 7
+3. `layer.js` - Line 10
+4. `urlconstants.js` - Line 6
+5. `aggregationconstants.js` - Line 7
 6. `onetool.js` - Replace entire OneToolMapData array
+
+**Everything is in one folder - super easy to find!** 🎉
 
 ### Where to Find Your Files:
 ```

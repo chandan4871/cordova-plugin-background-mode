@@ -18,17 +18,17 @@
 
 import L from 'leaflet';
 import * as Esri from 'esri-leaflet';
-import {ConfigStoreInt, arrayToList, reversePolygonLatLng, sqmToSqkm, getFeatureCenter, polygonsToMultiPolygon, convertSquareMetersToHa, buildToDeployServer} from "../functions/util";
+import {ConfigStoreInt, arrayToList, reversePolygonLatLng, sqmToSqkm, getFeatureCenter, polygonsToMultiPolygon, convertSquareMetersToHa, buildToDeployServer} from "./util";
 import React from 'react';
-import Layer from '../functions/layer';
-import WebApi from '../WebApi';
+import Layer from './layer';
+import WebApi from './WebApi';
 import DropDownList from 'Components/v2/stateless/dropdownlist';
 
-import UrlConstants from "Constants/urlconstants";
-import { PlanningArea, LandUseType } from "Constants/aggregationconstants";
+import UrlConstants from "./urlconstants";
+import { PlanningArea, LandUseType } from "./aggregationconstants";
 import BarChart from 'Components/charts/barchart';
-import { GazettedLandUseColors } from "Constants/chartconstants";
-import Ajax from "../wrapper/ajax";
+import { GazettedLandUseColors } from "./chartconstants";
+import Ajax from "./ajax";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from '@mui/material/FormControlLabel';

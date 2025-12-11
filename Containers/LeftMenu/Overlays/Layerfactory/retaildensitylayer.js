@@ -1,11 +1,11 @@
 /**
- * Parks Core Layer
+ * Retail Density Layer
  * TODO: Implement this layer based on your requirements
  */
 
-import Layer from '../functions/layer';
+import Layer from './layer';
 
-export default class ParksCoreLayer extends Layer {
+export default class RetailDensityLayer extends Layer {
     constructor(opts, token) {
         super(opts, token);
     }

@@ -12,7 +12,7 @@ All the LayerFactory files have been created with placeholder implementations. N
 
 The following files currently have placeholder implementations and need to be updated to import from your actual application:
 
-#### 1.1 `wrapper/ajax.js`
+#### 1.1 `ajax.js`
 **Current**: Placeholder Ajax implementation
 **Action Needed**: 
 - Find your actual Ajax utility file (probably in `src/Utils/ajax.js` or similar)
@@ -23,7 +23,7 @@ import Ajax from 'Utils/ajax';
 export default Ajax;
 ```
 
-#### 1.2 `functions/util.js`
+#### 1.2 `util.js`
 **Current**: Placeholder utility functions
 **Action Needed**:
 - Find your actual utility functions file (probably in `src/Utils/helpers.js` or similar)
@@ -49,7 +49,7 @@ import {
 export { /* all functions */ };
 ```
 
-#### 1.3 `functions/layer.js`
+#### 1.3 `layer.js`
 **Current**: Minimal placeholder Layer class
 **Action Needed**:
 - The layer.js file you provided earlier appears to be your actual Layer class
@@ -60,7 +60,7 @@ import Layer from 'path/to/your/actual/Layer';
 export default Layer;
 ```
 
-#### 1.4 `constants/urlconstants.js`
+#### 1.4 `urlconstants.js`
 **Current**: Placeholder URLs
 **Action Needed**:
 - Update with actual ArcGIS server URLs:
@@ -70,7 +70,7 @@ export const ControllerUrl = UrlConstants.ControllerUrl;
 export default UrlConstants;
 ```
 
-#### 1.5 `constants/aggregationconstants.js`
+#### 1.5 `aggregationconstants.js`
 **Current**: Placeholder constants
 **Action Needed**:
 - Update with actual planning areas and land use types:
@@ -116,16 +116,16 @@ export default OneToolMapData;
 
 The following entity layer files have been created as stubs. Implement them based on `mp19landuselayer.js` as a template:
 
-- `entities/parkscorelayer.js`
-- `entities/salessitelayer.js`
-- `entities/rentalofstatelandlayer.js`
-- `entities/retaildensitylayer.js`
+- `parkscorelayer.js`
+- `salessitelayer.js`
+- `rentalofstatelandlayer.js`
+- `retaildensitylayer.js`
 
 **Template to follow**:
 ```javascript
-import Layer from '../functions/layer';
-import WebApi from '../WebApi';
-import Ajax from "../wrapper/ajax";
+import Layer from './layer';
+import WebApi from './WebApi';
+import Ajax from "./ajax";
 // ... other imports
 
 export default class YourLayer extends Layer {
@@ -148,7 +148,7 @@ export default class YourLayer extends Layer {
 
 ### Step 4: Update ConfigStoreInt
 
-**File**: `functions/util.js`
+**File**: `util.js`
 
 **Action Needed**:
 Make sure `ConfigStoreInt` is properly initialized:
@@ -190,16 +190,16 @@ export const ConfigStoreInt = {
 ### Step 6: Troubleshooting
 
 #### Error: "Cannot find module 'Utils/ajax'"
-**Solution**: Update the import path in `wrapper/ajax.js` to match your project structure.
+**Solution**: Update the import path in `ajax.js` to match your project structure.
 
 #### Error: "Cannot find module 'Constants/urlconstants'"
-**Solution**: Update the import path in `constants/urlconstants.js` to match your project structure.
+**Solution**: Update the import path in `urlconstants.js` to match your project structure.
 
 #### Error: "ConfigStoreInt.sr is undefined"
 **Solution**: Ensure `setupDevelopmentEnvs()` is called in `Overlays.js` before `getLayers()`.
 
 #### Error: "Aggregations is not defined"
-**Solution**: Update `constants/aggregationconstants.js` with actual values from your application.
+**Solution**: Update `aggregationconstants.js` with actual values from your application.
 
 #### Layers not displaying
 **Solution**: 
@@ -209,7 +209,7 @@ export const ConfigStoreInt = {
 
 #### Filters not working
 **Solution**:
-1. Verify utility functions in `functions/util.js` are properly imported
+1. Verify utility functions in `util.js` are properly imported
 2. Check Ajax wrapper is working correctly
 3. Verify layer definitions in `onetool.js`
 
@@ -255,7 +255,7 @@ If you encounter issues:
 3. Ensure webpack aliases (`Components`, `Constants`, `Utils`) are configured
 4. Check that all required npm packages are installed
 
-## File Structure Reference
+## File Structure Reference (FLAT - Easy to Find!)
 
 ```
 src/
@@ -263,20 +263,24 @@ src/
 │   └── LeftMenu/
 │       └── Overlays/
 │           ├── Overlays.js (imports LayerFactory)
-│           └── Layerfactory/
+│           └── Layerfactory/  ← ALL FILES ARE HERE AT ONE LEVEL!
 │               ├── layerfactory.js
 │               ├── WebApi.ts
 │               ├── onetool.js
-│               ├── functions/
-│               │   ├── util.js (re-exports from Utils/)
-│               │   ├── layer.js (re-exports from your Layer)
-│               │   └── configvalidator.ts
-│               ├── entities/
-│               │   └── *.js (layer implementations)
-│               ├── wrapper/
-│               │   └── ajax.js (re-exports from Utils/)
-│               └── constants/
-│                   └── *.js (re-exports from Constants/)
+│               ├── util.js (re-exports from Utils/)
+│               ├── layer.js (re-exports from your Layer)
+│               ├── configvalidator.ts
+│               ├── ajax.js (re-exports from Utils/)
+│               ├── urlconstants.js (re-exports from Constants/)
+│               ├── aggregationconstants.js (re-exports from Constants/)
+│               ├── chartconstants.js
+│               ├── mp19landuselayer.js
+│               ├── parkscorelayer.js
+│               ├── salessitelayer.js
+│               ├── rentalofstatelandlayer.js
+│               ├── retaildensitylayer.js
+│               ├── export-css.css
+│               └── [documentation files]
 ├── Utils/ (your actual utilities)
 ├── Constants/ (your actual constants)
 └── Components/ (your actual components)

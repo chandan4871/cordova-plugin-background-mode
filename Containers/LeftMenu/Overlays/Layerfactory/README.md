@@ -2,31 +2,37 @@
 
 This directory contains the integrated LayerFactory code that was previously loaded from the external ePlanner application.
 
-## ✅ Completed Files
+## ✅ Completed Files (Flat Structure - Easy to Find!)
 
 ```
 Containers/LeftMenu/Overlays/Layerfactory/
-├── layerfactory.js          # ✅ Main LayerFactory class
-├── WebApi.ts                # ✅ Web API utilities  
-├── onetool.js               # ✅ OneTool map data configuration (needs customization)
-├── export-css.css           # ✅ Styles for LayerFactory components
-├── functions/               
-│   ├── util.js             # ✅ Utility functions (placeholders - needs integration)
-│   ├── layer.js            # ✅ Base Layer class (placeholder - needs integration)
-│   └── configvalidator.ts  # ✅ Config validation
-├── entities/               
-│   ├── mp19landuselayer.js          # ✅ MP19 Land Use Layer
-│   ├── parkscorelayer.js            # ✅ Placeholder stub
-│   ├── salessitelayer.js            # ✅ Placeholder stub
-│   ├── rentalofstatelandlayer.js    # ✅ Placeholder stub
-│   └── retaildensitylayer.js        # ✅ Placeholder stub
-├── wrapper/               
-│   └── ajax.js            # ✅ Ajax wrapper (placeholder - needs integration)
-└── constants/
-    ├── urlconstants.js            # ✅ URL constants (placeholders)
-    ├── aggregationconstants.js    # ✅ Aggregation constants (placeholders)
-    └── chartconstants.js          # ✅ Chart colors
+├── layerfactory.js                 # ✅ Main LayerFactory class
+├── WebApi.ts                       # ✅ Web API utilities
+├── onetool.js                      # ✅ Map data configuration (customize with your layers)
+├── export-css.css                  # ✅ Styles for components
+│
+├── util.js                         # ✅ Utility functions (needs integration)
+├── layer.js                        # ✅ Base Layer class (needs integration)
+├── configvalidator.ts              # ✅ Config validation
+├── ajax.js                         # ✅ Ajax wrapper (needs integration)
+│
+├── urlconstants.js                 # ✅ URL constants (update with your URLs)
+├── aggregationconstants.js         # ✅ Aggregation constants (update with your data)
+├── chartconstants.js               # ✅ Chart colors
+│
+├── mp19landuselayer.js             # ✅ MP19 Land Use Layer (fully implemented)
+├── parkscorelayer.js               # ✅ Placeholder stub
+├── salessitelayer.js               # ✅ Placeholder stub
+├── rentalofstatelandlayer.js       # ✅ Placeholder stub
+├── retaildensitylayer.js           # ✅ Placeholder stub
+│
+├── README.md                       # 📖 This file
+├── SETUP_GUIDE.md                  # 📖 Detailed setup instructions
+├── INTEGRATION_SUMMARY.md          # 📖 What was completed
+└── QUICK_CHECKLIST.md              # 📖 Task checklist
 ```
+
+**All files are now at the same level - no nested folders! Easy to find! 🎉**
 
 ## Integration
 

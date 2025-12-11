@@ -17,16 +17,16 @@
 --------------------------------------------------------------------------------------------------*/
 
 //@ts-ignore
-import Ajax from "./wrapper/ajax";
+import Ajax from "./ajax";
 //@ts-ignore
-import { reproject, buildToDeployServer, reversePolygonLatLng, appendUrlWithParams, ConfigStoreInt, getGeospaceToken } from "./functions/util";
+import { reproject, buildToDeployServer, reversePolygonLatLng, appendUrlWithParams, ConfigStoreInt, getGeospaceToken } from "./util";
 //@ts-ignore
-import UrlConstants, { ControllerUrl } from "./constants/urlconstants";
+import UrlConstants, { ControllerUrl } from "./urlconstants";
 import { LatLng } from "leaflet";
 import * as Esri from 'esri-leaflet';
 
 //@ts-ignore
-import { Aggregations } from "./constants/aggregationconstants";
+import { Aggregations } from "./aggregationconstants";
 
 class WebApi {
     _arcgisTokenGetter: () => string = () => "";

@@ -14,25 +14,23 @@ All necessary files and folders have been created at:
 - ✅ `onetool.js` - Map data configuration (needs your layer definitions)
 - ✅ `export-css.css` - Styles for LayerFactory components
 
-### 3. Function Files
-- ✅ `functions/util.js` - Utility functions (placeholders, needs integration with your Utils)
-- ✅ `functions/layer.js` - Base Layer class (placeholder, needs integration with your Layer class)
-- ✅ `functions/configvalidator.ts` - Configuration validation logic
+### 3. Utility & Helper Files (All at root level - easy to find!)
+- ✅ `util.js` - Utility functions (placeholders, needs integration with your Utils)
+- ✅ `layer.js` - Base Layer class (placeholder, needs integration with your Layer class)
+- ✅ `configvalidator.ts` - Configuration validation logic
+- ✅ `ajax.js` - Ajax wrapper (placeholder, needs integration with your Ajax utility)
 
-### 4. Wrapper Files
-- ✅ `wrapper/ajax.js` - Ajax wrapper (placeholder, needs integration with your Ajax utility)
+### 4. Constants (All at root level - easy to find!)
+- ✅ `urlconstants.js` - URL constants (placeholders, needs your actual URLs)
+- ✅ `aggregationconstants.js` - Aggregation constants (placeholders, needs your actual values)
+- ✅ `chartconstants.js` - Chart colors and configuration
 
-### 5. Constants
-- ✅ `constants/urlconstants.js` - URL constants (placeholders, needs your actual URLs)
-- ✅ `constants/aggregationconstants.js` - Aggregation constants (placeholders, needs your actual values)
-- ✅ `constants/chartconstants.js` - Chart colors and configuration
-
-### 6. Entity Layers
-- ✅ `entities/mp19landuselayer.js` - Fully implemented MP19 Land Use Layer
-- ✅ `entities/parkscorelayer.js` - Stub (needs implementation)
-- ✅ `entities/salessitelayer.js` - Stub (needs implementation)
-- ✅ `entities/rentalofstatelandlayer.js` - Stub (needs implementation)
-- ✅ `entities/retaildensitylayer.js` - Stub (needs implementation)
+### 5. Entity Layers (All at root level - easy to find!)
+- ✅ `mp19landuselayer.js` - Fully implemented MP19 Land Use Layer
+- ✅ `parkscorelayer.js` - Stub (needs implementation)
+- ✅ `salessitelayer.js` - Stub (needs implementation)
+- ✅ `rentalofstatelandlayer.js` - Stub (needs implementation)
+- ✅ `retaildensitylayer.js` - Stub (needs implementation)
 
 ### 7. Updated Overlays Component
 - ✅ `Overlays.js` has been updated to import local LayerFactory
@@ -50,27 +48,27 @@ All necessary files and folders have been created at:
 
 The error you're seeing (`Cannot find module './WebApi'`) has been fixed. But you need to update these placeholder files to import from your actual application:
 
-1. **`wrapper/ajax.js`** - Point to your actual Ajax utility
+1. **`ajax.js`** - Point to your actual Ajax utility
    ```javascript
    import Ajax from 'Utils/ajax';  // Update this path
    ```
 
-2. **`functions/util.js`** - Point to your actual utility functions
+2. **`util.js`** - Point to your actual utility functions
    ```javascript
    import { ... } from 'Utils/helpers';  // Update this path
    ```
 
-3. **`functions/layer.js`** - Point to your actual Layer class
+3. **`layer.js`** - Point to your actual Layer class
    ```javascript
    import Layer from 'path/to/your/Layer';  // Update this path
    ```
 
-4. **`constants/urlconstants.js`** - Point to your actual URL constants
+4. **`urlconstants.js`** - Point to your actual URL constants
    ```javascript
    import UrlConstants from 'Constants/urlconstants';  // Update this path
    ```
 
-5. **`constants/aggregationconstants.js`** - Point to your actual constants
+5. **`aggregationconstants.js`** - Point to your actual constants
    ```javascript
    import { Aggregations, PlanningArea, LandUseType } from 'Constants/aggregationconstants';
    ```
@@ -83,7 +81,7 @@ The error you're seeing (`Cannot find module './WebApi'`) has been fixed. But yo
 
 ### Priority 3: Implement Entity Layers
 
-7. **Entity Layer Stubs** - Implement based on `mp19landuselayer.js` template:
+7. **Entity Layer Stubs** - Implement based on `mp19landuselayer.js` template (all at root level):
    - `parkscorelayer.js`
    - `salessitelayer.js`
    - `rentalofstatelandlayer.js`
