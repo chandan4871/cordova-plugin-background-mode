@@ -22,12 +22,12 @@ import {ConfigStoreInt, arrayToList, reversePolygonLatLng, sqmToSqkm, getFeature
 import React from 'react';
 import Layer from '../functions/layer';
 import WebApi from '../WebApi';
-import DropDownList from '../../components/v2/stateless/dropdownlist';
+import DropDownList from 'Components/v2/stateless/dropdownlist';
 
-import UrlConstants from "../../constants/urlconstants";
-import { PlanningArea, LandUseType } from "../../constants/aggregationconstants";
-import BarChart from '../../components/charts/barchart';
-import { GazettedLandUseColors } from "../../constants/chartconstants";
+import UrlConstants from "Constants/urlconstants";
+import { PlanningArea, LandUseType } from "Constants/aggregationconstants";
+import BarChart from 'Components/charts/barchart';
+import { GazettedLandUseColors } from "Constants/chartconstants";
 import Ajax from "../wrapper/ajax";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";

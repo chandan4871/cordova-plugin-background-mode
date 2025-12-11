@@ -15,8 +15,8 @@ This guide explains how to integrate the local LayerFactory instead of loading i
 #### Added:
 ```javascript
 // Import local LayerFactory
-import 'Layerfactory/layerfactory';
-import 'Layerfactory/export-styles.css';
+import 'Containers/LeftMenu/Overlays/Layerfactory/layerfactory';
+import 'Containers/LeftMenu/Overlays/Layerfactory/export-css';
 ```
 
 #### Updated Logic:
@@ -28,12 +28,12 @@ import 'Layerfactory/export-styles.css';
 ### 2. Created LayerFactory Files
 
 #### Core Files:
-1. **`Layerfactory/layerfactory.js`** - Main LayerFactory class with corrected imports
-2. **`Layerfactory/WebApi.ts`** - Web API utilities (you provided this)
-3. **`Layerfactory/export-styles.css`** - Styles (replaces external CSS)
+1. **`Containers/LeftMenu/Overlays/Layerfactory/layerfactory.js`** - Main LayerFactory class with corrected imports
+2. **`Containers/LeftMenu/Overlays/Layerfactory/WebApi.ts`** - Web API utilities (you provided this)
+3. **`Containers/LeftMenu/Overlays/Layerfactory/export-css.css`** - Styles (replaces external CSS)
 
 #### Entity Files:
-1. **`Layerfactory/entities/mp19landuselayer.js`** - MP19 Land Use Layer with corrected imports
+1. **`Containers/LeftMenu/Overlays/Layerfactory/entities/mp19landuselayer.js`** - MP19 Land Use Layer with corrected imports
 
 ## Steps to Complete Integration
 
@@ -62,24 +62,27 @@ const loadEPlannerScripts = () => {
 ```
 
 ### Step 2: Add Missing Files
-You need to create these files in your `Layerfactory` folder:
+You need to create these files in the `Containers/LeftMenu/Overlays/Layerfactory` folder:
 
-1. **`Layerfactory/functions/util.js` or `util.ts`**
+1. **`Containers/LeftMenu/Overlays/Layerfactory/functions/util.js` or `util.ts`**
    - Contains: `ConfigStoreInt`, `arrayToList`, `reversePolygonLatLng`, `sqmToSqkm`, `getFeatureCenter`, `polygonsToMultiPolygon`, `convertSquareMetersToHa`, `buildToDeployServer`, `initDevEnv`, `reproject`, `appendUrlWithParams`, `getGeospaceToken`
 
-2. **`Layerfactory/functions/layer.js`**
+2. **`Containers/LeftMenu/Overlays/Layerfactory/functions/layer.js`**
    - Base Layer class that all entity layers extend
 
-3. **`Layerfactory/functions/configvalidator.ts`**
+3. **`Containers/LeftMenu/Overlays/Layerfactory/functions/configvalidator.ts`**
    - Contains: `isValidMapConfig`, `getErrorMsgs`, `clearErrorMsgs`
 
-4. **`Layerfactory/wrapper/ajax.js` or `ajax.ts`**
+4. **`Containers/LeftMenu/Overlays/Layerfactory/wrapper/ajax.js` or `ajax.ts`**
    - Ajax utility wrapper
 
-5. **`onetool.js` or `onetool.ts`** (in parent directory)
+5. **`Containers/LeftMenu/Overlays/Layerfactory/onetool.js` or `onetool.ts`**
    - OneToolMapData configuration
 
-6. **Entity layer files** (in `Layerfactory/entities/`):
+6. **`Containers/LeftMenu/Overlays/Layerfactory/WebApi.ts`**
+   - Web API utilities (you already provided this - just place it in this location)
+
+7. **Entity layer files** (in `Containers/LeftMenu/Overlays/Layerfactory/entities/`):
    - `parkscorelayer.js`
    - `salessitelayer.js`
    - `rentalofstatelandlayer.js`
@@ -88,24 +91,25 @@ You need to create these files in your `Layerfactory` folder:
 ### Step 3: Configure Build System
 
 #### Webpack Configuration:
-Add alias for Layerfactory path:
+Ensure your webpack configuration has the necessary aliases (most likely already configured):
 
 ```javascript
 // webpack.config.js
 module.exports = {
     resolve: {
         alias: {
-            'Layerfactory': path.resolve(__dirname, 'Layerfactory'),
             'Components': path.resolve(__dirname, 'Components'),
             'Constants': path.resolve(__dirname, 'Constants'),
             'Containers': path.resolve(__dirname, 'Containers'),
             'Store': path.resolve(__dirname, 'Store'),
             'Utils': path.resolve(__dirname, 'Utils'),
         },
-        extensions: ['.js', '.jsx', '.ts', '.tsx']
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.css']
     }
 };
 ```
+
+**Note**: The LayerFactory is imported using the full path `Containers/LeftMenu/Overlays/Layerfactory/...`, so no additional alias is needed.
 
 #### Package.json:
 Ensure all required dependencies are installed:
@@ -127,14 +131,17 @@ Ensure all required dependencies are installed:
 ```
 
 ### Step 4: Update Import Paths
-Make sure all components that use LayerFactory import it from the local path:
+The `Overlays.js` component now imports LayerFactory from the local path:
 
 ```javascript
 // Before:
 // Loaded externally via script tag
+// window.$eplannerLoaded check
 
 // After:
-import 'Layerfactory/layerfactory';
+import 'Containers/LeftMenu/Overlays/Layerfactory/layerfactory';
+import 'Containers/LeftMenu/Overlays/Layerfactory/export-css';
+// Direct access to window.LayerFactory
 ```
 
 ### Step 5: Test the Integration
@@ -173,14 +180,14 @@ import 'Layerfactory/layerfactory';
 ### Issue: Import errors for entity layers
 **Solution**: Verify all entity layer files exist and have correct import paths.
 
-### Issue: "Cannot find module 'Layerfactory/...'"
-**Solution**: Add webpack alias for Layerfactory path or use relative paths.
+### Issue: "Cannot find module 'Containers/LeftMenu/Overlays/Layerfactory/...'"
+**Solution**: Ensure the `Containers` alias is configured in webpack, or verify the files exist at the correct path.
 
 ### Issue: Styles not applying
 **Solution**: Ensure `export-styles.css` is imported and contains necessary styles.
 
 ### Issue: WebApi errors
-**Solution**: Check that `WebApi.ts` is in the correct location (`Layerfactory/WebApi.ts`) and all its dependencies are available.
+**Solution**: Check that `WebApi.ts` is in the correct location (`Containers/LeftMenu/Overlays/Layerfactory/WebApi.ts`) and all its dependencies are available.
 
 ## Next Steps
 

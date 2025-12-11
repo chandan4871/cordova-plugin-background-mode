@@ -15,9 +15,9 @@ import { selectOverlay, unselectOverlay, clearOverlays, getIdentifyOverlayResult
 import { updateRefreshEPlanner } from 'Store/Actions/Variables';
 
 // Import local LayerFactory instead of loading from external ePlanner
-import 'Layerfactory/layerfactory';
+import 'Containers/LeftMenu/Overlays/Layerfactory/layerfactory';
 // Import the CSS styles
-import 'Layerfactory/export-styles.css';
+import 'Containers/LeftMenu/Overlays/Layerfactory/export-css';
 
 import './Overlays.css';
 import { loadESRIModules } from 'Constants/Helpers/mapHelpers';

@@ -19,7 +19,7 @@ import { loadModules } from 'esri-loader';
 
 import React from 'react';
 import WebApi from './WebApi';
-import OneToolMapData from '../onetool';
+import OneToolMapData from './onetool';
 import { isValidMapConfig, getErrorMsgs, clearErrorMsgs } from "./functions/configvalidator";
 import Layer from './functions/layer';
 Layer.prototype.postIdentify = Layer.prototype.extPostIdentify

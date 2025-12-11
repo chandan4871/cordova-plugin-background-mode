@@ -1,0 +1,54 @@
+/**
+ * ePlanner Export Styles
+ * Styles for LayerFactory components
+ * Replaces: https://eplanner.gov.sg/Content/js/js-built/export-cssmin.css
+ */
+
+/* LayerFactory component styles */
+/* Add any specific styles needed for LayerFactory components here */
+
+/* Filter box and layer controls */
+.calc_results {
+    margin: 10px 0;
+    font-weight: 500;
+}
+
+.calc_btns {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+}
+
+.calc_btn_clear,
+.calc_btn_primary {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.calc_btn_clear {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.calc_btn_clear:hover {
+    background-color: #e0e0e0;
+}
+
+.calc_btn_primary {
+    background-color: #1976d2;
+    color: white;
+}
+
+.calc_btn_primary:hover {
+    background-color: #1565c0;
+}
+
+/* Ensure MUI components with epl prefix don't conflict */
+[class^="epl-exportjss"],
+[class*=" epl-exportjss"] {
+    /* Base styles for prefixed components */
+}
