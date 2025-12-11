@@ -2,26 +2,30 @@
 
 This directory contains the integrated LayerFactory code that was previously loaded from the external ePlanner application.
 
-## Location
+## ✅ Completed Files
 
 ```
 Containers/LeftMenu/Overlays/Layerfactory/
-├── layerfactory.js          # Main LayerFactory class
-├── WebApi.ts                # Web API utilities (to be added)
-├── onetool.js               # OneTool map data configuration (to be added)
-├── export-css.css           # Styles for LayerFactory components
-├── functions/               # Utility functions (to be added)
-│   ├── util.js/ts          # Utility functions
-│   ├── layer.js            # Base Layer class
-│   └── configvalidator.ts  # Config validation
-├── entities/               # Layer entity classes
-│   ├── mp19landuselayer.js # ✅ Created
-│   ├── parkscorelayer.js   # To be added
-│   ├── salessitelayer.js   # To be added
-│   ├── rentalofstatelandlayer.js # To be added
-│   └── retaildensitylayer.js     # To be added
-└── wrapper/               # Wrapper utilities (to be added)
-    └── ajax.js/ts         # Ajax wrapper
+├── layerfactory.js          # ✅ Main LayerFactory class
+├── WebApi.ts                # ✅ Web API utilities  
+├── onetool.js               # ✅ OneTool map data configuration (needs customization)
+├── export-css.css           # ✅ Styles for LayerFactory components
+├── functions/               
+│   ├── util.js             # ✅ Utility functions (placeholders - needs integration)
+│   ├── layer.js            # ✅ Base Layer class (placeholder - needs integration)
+│   └── configvalidator.ts  # ✅ Config validation
+├── entities/               
+│   ├── mp19landuselayer.js          # ✅ MP19 Land Use Layer
+│   ├── parkscorelayer.js            # ✅ Placeholder stub
+│   ├── salessitelayer.js            # ✅ Placeholder stub
+│   ├── rentalofstatelandlayer.js    # ✅ Placeholder stub
+│   └── retaildensitylayer.js        # ✅ Placeholder stub
+├── wrapper/               
+│   └── ajax.js            # ✅ Ajax wrapper (placeholder - needs integration)
+└── constants/
+    ├── urlconstants.js            # ✅ URL constants (placeholders)
+    ├── aggregationconstants.js    # ✅ Aggregation constants (placeholders)
+    └── chartconstants.js          # ✅ Chart colors
 ```
 
 ## Integration
@@ -78,9 +82,9 @@ Ensure these dependencies are installed in `package.json`:
 }
 ```
 
-## Files Still Needed
+## 🔧 Files That Need Integration
 
-You need to create these files to complete the integration:
+All files have been created, but several need to be integrated with your existing application code:
 
 ### 1. Core Files
 - `WebApi.ts` - Already provided by you (place in this directory)
